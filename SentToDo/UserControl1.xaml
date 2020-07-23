@@ -6,6 +6,13 @@
              xmlns:local="clr-namespace:SentToDo"
              mc:Ignorable="d"
              d:DesignHeight="450" d:DesignWidth="800" Foreground="White" Width="120" Height="40">
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Themes/Dark.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </UserControl.Resources>
     <Grid Margin="3" MouseDown="UIElement_OnMouseDown">
         <Grid.RowDefinitions>
             <RowDefinition />
@@ -15,13 +22,13 @@
             <ColumnDefinition Width="*" />
             <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
-        <TextBlock Grid.Column="0" Grid.Row="0" Text="Task name" />
+        <TextBlock Grid.Column="0" Grid.Row="0" Text="Task name 1" />
         <StackPanel Grid.Column="1" Grid.Row="0">
-            <CheckBox x:Name="CheckBox1" Height="20" Content="" />
+            <CheckBox x:Name="CheckBox1" Style="{DynamicResource TaskBar}" Height="20" Content=""/>
         </StackPanel>
-        <TextBlock Grid.Column="0" Grid.Row="1" Text="Task name" />
+        <TextBlock Grid.Column="0" Grid.Row="1" Text="Task name 2" />
         <StackPanel Grid.Column="1" Grid.Row="1">
-            <CheckBox x:Name="CheckBox2" Height="20" Content="" />
+            <CheckBox x:Name="CheckBox2" Style="{DynamicResource TaskBar}" Height="20" Content="" />
         </StackPanel>
 
         <Grid.ContextMenu>

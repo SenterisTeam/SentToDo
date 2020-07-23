@@ -60,6 +60,7 @@
   <ItemGroup>
     <Page Include="App.xaml" />
     <Page Include="MainWindow.xaml" />
+    <Page Include="Themes\Dark.xaml" />
     <Page Include="UserControl1.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
