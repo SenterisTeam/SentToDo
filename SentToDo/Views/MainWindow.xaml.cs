@@ -7,6 +7,7 @@ namespace SentToDo
         public MainWindow()
         {
             InitializeComponent();
+            
         }
     }
 }
