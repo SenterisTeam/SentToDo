@@ -1,8 +1,9 @@
 ﻿# SentToDo - Desktop
-Windows taskbar panel for displaying notes and tasks
+Windows taskbar panel for displaying notes and tasks  
+Tested on Windows 10 x64 Version 2004
 > :warning: **The program is still in development**
 
-![Alt text](images/taskbar%201.png?raw=true "Taskbar 1")
+![Alt text](Images/taskbar%201.png "Taskbar 1")
 
 ## Installing
 Compile or download SentToDo release
