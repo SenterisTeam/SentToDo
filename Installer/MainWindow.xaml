@@ -7,13 +7,12 @@
         mc:Ignorable="d"
         WindowStyle="None" Background="#0C0C0C" Foreground="White"
         Title="SentToDo Installer" Height="350" Width="525" ResizeMode="NoResize" WindowStartupLocation="CenterScreen">
-        
     <StackPanel VerticalAlignment="Center">
         <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
             <TextBlock Margin="5" Background="Transparent" TextAlignment="Center"
-                     Foreground="White"
-                     VerticalAlignment="Center" HorizontalAlignment="Center" Text="Welcome to SentToDo Installer!"
-                     FontSize="32" />
+                       Foreground="White"
+                       VerticalAlignment="Center" HorizontalAlignment="Center" Text="Welcome to SentToDo Installer!"
+                       FontSize="32" />
         </StackPanel>
         <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
             <TextBlock Margin="5" Background="Transparent" TextAlignment="Center"
@@ -21,8 +20,10 @@
                        VerticalAlignment="Center" HorizontalAlignment="Center" Text="Quick ToDo List on your Taskbar" />
         </StackPanel>
         <StackPanel HorizontalAlignment="Center" Orientation="Horizontal" Margin="0 30 0 0">
-            <Button Margin="0 0 10 0" Width="100" Content="Install" Background="#007700" BorderBrush="#007700"></Button>
-            <Button Margin="10 0 0 0" Width="100" Content="Cancel" Background="Gray" Click="Cancel_OnClick"></Button>
+            <Button Margin="0 0 10 0" Width="100" Content="Install" Background="Transparent" BorderThickness="2" 
+                    BorderBrush="#2ecc40" Foreground="#2ecc40" Click="Install_OnClick"/>
+            <Button Margin="10 0 0 0" Width="100" Content="Cancel" Background="Transparent" BorderThickness="2"
+                    BorderBrush="#767676" Foreground="#767676" Click="Cancel_OnClick" />
         </StackPanel>
     </StackPanel>
 </Window>
