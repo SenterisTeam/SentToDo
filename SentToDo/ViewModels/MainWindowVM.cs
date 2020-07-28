@@ -58,6 +58,13 @@ namespace SentToDo.ViewModels
                 {
                     tasks.Add(item);
                 }
+
+                Task t = new Task();
+                t.name = "delat domashky";
+                t.isCompleted = true;
+                t.deadline = DateTime.Now;
+
+                tasks.Add(t);
             }
         }
 
