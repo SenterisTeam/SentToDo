@@ -10,7 +10,7 @@ using SentToDo.ViewModels.KindOfMagic;
 
 namespace SentToDo.ViewModels
 {
-    public class MainWindowVM : PropertyChangedMagic
+    public class MainVM : PropertyChangedMagic
     {
         #region Commands
         //public DelegateCommand RemoveItemCmd
@@ -48,7 +48,7 @@ namespace SentToDo.ViewModels
         public Task selectedTask { get; set; }
 
         public ObservableCollection<Task> tasks { get; set; }
-        public MainWindowVM()
+        public MainVM()
         {
             tasks = new ObservableCollection<Task>();
             using (ToDoContext db = new ToDoContext())

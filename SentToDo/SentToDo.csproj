@@ -167,9 +167,18 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="IoC.cs" />
+    <Compile Include="Services\PageService.cs" />
+    <Compile Include="Views\Main.xaml.cs">
+      <DependentUpon>Main.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="VMLocator.cs" />
     <Page Include="App.xaml" />
-    <Page Include="Views\MainWindow.xaml" />
     <Page Include="Themes\Dark.xaml" />
+    <Page Include="Views\Main.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\UserControl1.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -184,11 +193,8 @@
     <Compile Include="Models\ToDoContext.cs" />
     <Compile Include="ViewModels\KindOfMagic\MagicAttribute.cs" />
     <Compile Include="ViewModels\KindOfMagic\PropertyChangedMagic.cs" />
-    <Compile Include="ViewModels\MainWindowVM.cs" />
+    <Compile Include="ViewModels\MainVM.cs" />
     <Compile Include="ViewModels\UserControl1VM.cs" />
-    <Compile Include="Views\MainWindow.xaml.cs">
-      <DependentUpon>MainWindow.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Views\UserControl1.xaml.cs">
       <DependentUpon>UserControl1.xaml</DependentUpon>
       <SubType>Code</SubType>

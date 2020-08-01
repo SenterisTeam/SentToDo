@@ -2,11 +2,8 @@
 using System.Windows.Controls;
 using System.Windows.Input;
 
-namespace SentToDo
+namespace SentToDo.Views
 {
-    /// <summary>
-    /// Interaction logic for UserControl1.xaml
-    /// </summary>
     public partial class UserControl1 : UserControl
     {
         public UserControl1()
@@ -18,13 +15,13 @@ namespace SentToDo
         {
             if (e.LeftButton == MouseButtonState.Pressed)
             {
-                new MainWindow().Show();
+                new Main().Show();
             }
         }
 
         private void Settings_OnClick(object sender, RoutedEventArgs e)
         {
-            new MainWindow().Show();
+            new Main().Show();
         }
     }
 }
