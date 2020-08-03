@@ -4,9 +4,9 @@ using System.Windows.Input;
 
 namespace SentToDo.Views
 {
-    public partial class UserControl1 : UserControl
+    public partial class WnPanel : UserControl
     {
-        public UserControl1()
+        public WnPanel()
         {
             InitializeComponent();
         }
@@ -15,13 +15,13 @@ namespace SentToDo.Views
         {
             if (e.LeftButton == MouseButtonState.Pressed)
             {
-                new Main().Show();
+                new Tasks().Show();
             }
         }
 
         private void Settings_OnClick(object sender, RoutedEventArgs e)
         {
-            new Main().Show();
+            new Tasks().Show();
         }
     }
 }

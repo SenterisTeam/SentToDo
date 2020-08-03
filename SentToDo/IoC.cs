@@ -13,7 +13,9 @@ namespace SentToDo
         {
             var services = new ServiceCollection();
 
-            services.AddSingleton<MainVM>();
+            services.AddSingleton<TaskVM>();
+
+            // services.AddTransient<>();
 
             services.AddSingleton<PageService>();
 

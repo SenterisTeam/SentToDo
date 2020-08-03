@@ -19,7 +19,7 @@ namespace SentToDo
             Options.MinHorizontalSize = new DeskBandSize(120, -1);
         }
 
-        protected override UIElement UIElement => new UserControl1();
+        protected override UIElement UIElement => new WnPanel();
 
         private List<DeskBandMenuItem> ContextMenuItems => new List<DeskBandMenuItem>();
     }
