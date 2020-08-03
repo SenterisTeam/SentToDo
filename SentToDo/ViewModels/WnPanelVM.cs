@@ -87,5 +87,17 @@ namespace SentToDo.ViewModels
 
         #endregion
 
+        //private void UIElement_OnMouseDown(object sender, MouseButtonEventArgs e)
+        //{
+        //    if (e.LeftButton == MouseButtonState.Pressed)
+        //    {
+        //        GoToTasks()
+        //    }
+        //}
+
+        public void GoToTasks()
+        {
+            
+        }
     }
 }

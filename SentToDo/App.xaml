@@ -4,9 +4,11 @@
              xmlns:local="clr-namespace:SentToDo">
     <Application.Resources>
         <ResourceDictionary>
-            <local:VMLocator x:Key="VMLocator"/>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="Themes/Dark.xaml" />
+                <ResourceDictionary>
+                    <local:AppBootstrapper x:Key="bootstrapper" />
+                </ResourceDictionary>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>

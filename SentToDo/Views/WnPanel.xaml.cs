@@ -1,4 +1,5 @@
-﻿using System.Windows.Controls;
+﻿using SentToDo.ViewModels;
+using System.Windows.Controls;
 
 namespace SentToDo.Views
 {
@@ -6,20 +7,8 @@ namespace SentToDo.Views
     {
         public WnPanel()
         {
+            DataContext = new WnPanelVM();
             InitializeComponent();
         }
-
-        //private void UIElement_OnMouseDown(object sender, MouseButtonEventArgs e)
-        //{
-        //    if (e.LeftButton == MouseButtonState.Pressed)
-        //    {
-        //        new Tasks().Show();
-        //    }
-        //}
-
-        //private void Settings_OnClick(object sender, RoutedEventArgs e)
-        //{
-        //    new Tasks().Show();
-        //}
     }
 }
