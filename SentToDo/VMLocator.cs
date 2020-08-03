@@ -4,7 +4,7 @@ namespace SentToDo
 {
     public class VMLocator
     {
-        public TaskVM MainVM => Ioc.Resolve<TaskVM>();
-
+        public TaskVM taskVM => Ioc.Resolve<TaskVM>();
+        public WnPanelVM wnPanelVM => Ioc.Resolve<WnPanelVM>();
     }
 }

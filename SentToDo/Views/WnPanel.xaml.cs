@@ -1,6 +1,4 @@
-﻿using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Input;
+﻿using System.Windows.Controls;
 
 namespace SentToDo.Views
 {
@@ -11,17 +9,17 @@ namespace SentToDo.Views
             InitializeComponent();
         }
 
-        private void UIElement_OnMouseDown(object sender, MouseButtonEventArgs e)
-        {
-            if (e.LeftButton == MouseButtonState.Pressed)
-            {
-                new Tasks().Show();
-            }
-        }
+        //private void UIElement_OnMouseDown(object sender, MouseButtonEventArgs e)
+        //{
+        //    if (e.LeftButton == MouseButtonState.Pressed)
+        //    {
+        //        new Tasks().Show();
+        //    }
+        //}
 
-        private void Settings_OnClick(object sender, RoutedEventArgs e)
-        {
-            new Tasks().Show();
-        }
+        //private void Settings_OnClick(object sender, RoutedEventArgs e)
+        //{
+        //    new Tasks().Show();
+        //}
     }
 }

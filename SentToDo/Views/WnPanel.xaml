@@ -4,16 +4,19 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:SentToDo.Views"
+             xmlns:gl="clr-namespace:SentToDo"
              mc:Ignorable="d"
+             DataContext="{Binding Source={StaticResource VMLocator}, Path=WnPanelVM}"
              d:DesignHeight="450" d:DesignWidth="800" Foreground="White" Width="120" Height="40">
     <UserControl.Resources>
         <ResourceDictionary>
+            <gl:VMLocator x:Key="VMLocator"/>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="../Themes/Dark.xaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </UserControl.Resources>
-    <Grid Margin="3" MouseDown="UIElement_OnMouseDown">
+    <Grid Margin="3" > <!--MouseDown="UIElement_OnMouseDown"-->
         <Grid.RowDefinitions>
             <RowDefinition />
             <RowDefinition />
@@ -33,7 +36,7 @@
 
         <Grid.ContextMenu>
             <ContextMenu>
-                <MenuItem Header="Settings" Click="Settings_OnClick" />
+                <MenuItem Header="Settings"  /> <!--Click="Settings_OnClick"-->
             </ContextMenu>
         </Grid.ContextMenu>
     </Grid>
