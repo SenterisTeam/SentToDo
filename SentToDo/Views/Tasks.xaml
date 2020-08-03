@@ -1,15 +1,15 @@
-﻿<Window x:Class="SentToDo.Views.Main"
+﻿<Window x:Class="SentToDo.Views.Tasks"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:SentToDo.Views"
         mc:Ignorable="d"
-        Title="Main" Height="450" Width="800">
+        Title="Tasks" Height="450" Width="800">
     <Grid>
         <DataGrid x:Name="DGExamples"
                   HorizontalAlignment="Center" VerticalAlignment="Center" Width="602" Height="100" Margin="0,250,0,0"
-                  ItemsSource="{Binding Examples}"
+                  ItemsSource="{Binding tasks}"
                   AutoGenerateColumns="True" RowHeaderWidth="0" MinWidth="601" >
             <DataGrid.Columns>
                 <DataGridTemplateColumn Header="Priority">
@@ -21,27 +21,14 @@
                     <DataGridTemplateColumn.CellEditingTemplate>
                         <DataTemplate>
                             <!--https://ru.stackoverflow.com/questions/648298/Как-в-wpf-mvvm-сделать-привязку-данных-к-combobox-->
-                            <ComboBox Height="50" Width="150" VerticalAlignment="Top">
-                                      <!--ItemsSource="{Binding PostViewModels}" DisplayMemberPath="Model.Name" 
-                                      SelectedValue="{Binding Model.PostID}" SelectedValuePath="Model.ID"-->
-                                <ComboBoxItem>
-                                    <Border Background="#f11515" />
-                                </ComboBoxItem>
-                                <ComboBoxItem>
-                                    <Border Background="#f18b1c" />
-                                </ComboBoxItem>
-                                <ComboBoxItem>
-                                    <Border Background="#eff11c" />
-                                </ComboBoxItem>
-                                <ComboBoxItem>
-                                    <Border Background="#1cf12c" />
-                                </ComboBoxItem>
-                                <ComboBoxItem>
-                                    <Border Background="#1cc8f1" />
-                                </ComboBoxItem>
-                                <ComboBoxItem>
-                                    <Border Background="#a1a1a1" />
-                                </ComboBoxItem>
+                            <ComboBox Height="50" Width="150" VerticalAlignment="Top"
+                                      ItemsSource="{Binding priorities}" SelectedValue="{Binding Path=selectedTask.priority}" >
+                                <!--https://www.c-sharpcorner.com/article/explain-combo-box-binding-in-mvvm-wpf/-->
+                                <ComboBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <Border Background="{Binding Path=string}"/>
+                                    </DataTemplate>
+                                </ComboBox.ItemTemplate>
                             </ComboBox>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellEditingTemplate>

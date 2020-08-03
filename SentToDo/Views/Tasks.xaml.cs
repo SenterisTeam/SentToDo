@@ -2,9 +2,9 @@
 
 namespace SentToDo.Views
 {
-    public partial class Main : Window
+    public partial class Tasks : Window
     {
-        public Main()
+        public Tasks()
         {
             InitializeComponent();
         }

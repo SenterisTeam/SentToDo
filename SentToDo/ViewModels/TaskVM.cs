@@ -10,7 +10,7 @@ using SentToDo.ViewModels.KindOfMagic;
 
 namespace SentToDo.ViewModels
 {
-    public class MainVM : PropertyChangedMagic
+    public class TaskVM : PropertyChangedMagic
     {
         #region Commands
         //public DelegateCommand RemoveItemCmd
@@ -48,23 +48,24 @@ namespace SentToDo.ViewModels
         public Task selectedTask { get; set; }
 
         public ObservableCollection<Task> tasks { get; set; }
-        public MainVM()
+        public ObservableCollection<Priority> priorities { get; set; }
+        public TaskVM()
         {
             tasks = new ObservableCollection<Task>();
+            priorities = new ObservableCollection<Priority>();
             using (ToDoContext db = new ToDoContext())
             {
-                List<Task> temp = db.Tasks.ToList();
-                foreach (var item in temp)
+                List<Task> tasksTemp = db.tasks.ToList();
+                foreach (var item in tasksTemp)
                 {
                     tasks.Add(item);
                 }
 
-                Task t = new Task();
-                t.name = "delat domashky";
-                t.isCompleted = true;
-                t.deadline = DateTime.Now;
-
-                tasks.Add(t);
+                List<Priority> pTemp = db.priorities.ToList();
+                foreach (var item in pTemp)
+                {
+                    priorities.Add(item);
+                }
             }
         }
 

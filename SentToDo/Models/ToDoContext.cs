@@ -9,7 +9,9 @@ namespace SentToDo.Models
             Database.EnsureCreated();
         }
 
-        public DbSet<Task> Tasks { get; set; }
+        public DbSet<Task> tasks { get; set; }
+        public DbSet<Category> categories { get; set; }
+        public DbSet<Priority> priorities { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
