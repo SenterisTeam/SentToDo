@@ -1,4 +1,5 @@
 ﻿using SentToDo.Views;
+using System;
 using System.Linq;
 using System.Windows;
 
@@ -28,7 +29,6 @@ namespace SentToDo
 
     public static class WindowsOpener
     {
-
         static WindowInfo[] windows = new WindowInfo[] 
         { 
             new WindowInfo{ name = "tasks" }
@@ -41,8 +41,10 @@ namespace SentToDo
                 case "tasks":
                     window = new Tasks();
                     break;
+                default:
+                    throw new Exception("Window with the name does not exist");
             }
-            if(window != null) windows.Where(w => w.name.Equals(name)).FirstOrDefault().Create(window);
+            windows.Where(w => w.name.Equals(name)).FirstOrDefault().Create(window);
         }
     }
 }

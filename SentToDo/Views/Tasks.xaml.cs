@@ -8,6 +8,7 @@ namespace SentToDo.Views
         public Tasks()
         {
             InitializeComponent();
+            DataContext = new TasksVM();
         }
     }
 }

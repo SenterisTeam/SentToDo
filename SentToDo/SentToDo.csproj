@@ -183,6 +183,7 @@
     <Compile Include="IShell.cs" />
     <Compile Include="Models\Priority.cs" />
     <Compile Include="ShellViewModel.cs" />
+    <Compile Include="ViewModels\TasksVM.cs" />
     <Compile Include="Views\Tasks.xaml.cs">
       <DependentUpon>Tasks.xaml</DependentUpon>
     </Compile>

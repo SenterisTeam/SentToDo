@@ -95,9 +95,6 @@ namespace SentToDo.ViewModels
         //    }
         //}
 
-        public void GoToTasks()
-        {
-            
-        }
+        public void GoToTasks() => WindowsOpener.OpenWindow("tasks");
     }
 }
