@@ -1,22 +1,39 @@
-﻿using DevExpress.Mvvm;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using SentToDo.Models;
+using Caliburn.Micro;
 using Microsoft.EntityFrameworkCore;
-using SentToDo.ViewModels.KindOfMagic;
+using SentToDo.Models;
 
 namespace SentToDo.ViewModels
 {
-    public class TaskVM : PropertyChangedMagic
+    public class TaskVM : Screen
     {
-        public Task selectedTask { get; set; }
+        Task _selectedTask;
+        public Task selectedTask
+        {
+            get => _selectedTask;
+            set
+            {
+                _selectedTask = value;
+                NotifyOfPropertyChange(() => selectedTask);
+            }
+        }
 
-        public ObservableCollection<Task> tasks { get; set; }
+        BindableCollection<Task> _tasks = new BindableCollection<Task>();
+        public BindableCollection<Task> tasks 
+        {
+            get => _tasks;
+            set 
+            { 
+                _tasks = value;
+                // NotifyOfPropertyChange(() => tasks);
+            }
+        }
         public TaskVM()
         {
-            tasks = new ObservableCollection<Task>();
+            tasks = new BindableCollection<Task>();
             using (ToDoContext db = new ToDoContext())
             {
                 List<Task> tasksTemp = db.tasks.ToList();
@@ -43,7 +60,26 @@ namespace SentToDo.ViewModels
         #endregion
 
         #region Properties
-        public long id { get; set; }
+        long _id;
+        string _name;
+        int _priority;
+        DateTime _pushDate;
+        DateTime _deadline;
+        bool _isCompleted;
+
+        Category _category;
+
+
+        public long id 
+        {
+            get => _id;
+            set
+            {
+                _id = value;
+                NotifyOfPropertyChange(() => id);
+            }
+
+        }
         public string name { get; set; }
         public int priority { get; set; }
         public DateTime pushDate { get; set; }

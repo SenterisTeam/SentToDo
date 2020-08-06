@@ -11,20 +11,37 @@ namespace SentToDo.ViewModels
 {
     public class TasksVM : TaskVM
     {
-        public ObservableCollection<Priority> priorities { get; set; }
+        #region Commands
+        //public DelegateCommand RemoveItemCmd
+        //{
+        //    get
+        //    {
+        //        return new DelegateCommand(() =>
+        //        {
+        //            DialogResult dialogResult = MessageBox.Show("Вы точно хотите удалить это слово?", "Подтверждение", MessageBoxButtons.YesNo);
+        //            if (dialogResult == DialogResult.Yes)
+        //            {
+        //                RemoveItem();
+        //            }
+        //        });
+        //    }
+        //}
 
-        public TasksVM()
-        {
-            priorities = new ObservableCollection<Priority>();
+        #endregion
+        #region for commands
+        //private void RemoveItem()
+        //{
+        //    using (SEWContext db = new SEWContext())
+        //    {
+        //        if (SelectedWord != null)
+        //        {
+        //            db.Entry(SelectedWord).State = EntityState.Deleted;
+        //            db.SaveChanges();
+        //            Words.Remove(SelectedWord);
+        //        }
+        //    }
+        //}
 
-            using (ToDoContext db = new ToDoContext())
-            {
-                List<Priority> pTemp = db.priorities.ToList();
-                foreach (var item in pTemp)
-                {
-                    priorities.Add(item);
-                }
-            }
-        }
+        #endregion
     }
 }

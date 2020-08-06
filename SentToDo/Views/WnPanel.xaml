@@ -33,7 +33,7 @@
 
         <Grid.ContextMenu>
             <ContextMenu>
-                <MenuItem x:Name="GoToTasks" Header="Tasks" />
+                <MenuItem x:Name="BtGoToTasks" Header="Tasks" />
             </ContextMenu>
         </Grid.ContextMenu>
     </Grid>

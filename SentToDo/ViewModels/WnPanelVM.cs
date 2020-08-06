@@ -9,23 +9,11 @@ using SentToDo.ViewModels.KindOfMagic;
 
 namespace SentToDo.ViewModels
 {
-    public class WnPanelVM : PropertyChangedMagic
+    public class WnPanelVM : TaskVM
     {
         #region Commands
-        //public DelegateCommand RemoveItemCmd
-        //{
-        //    get
-        //    {
-        //        return new DelegateCommand(() =>
-        //        {
-        //            DialogResult dialogResult = MessageBox.Show("Вы точно хотите удалить это слово?", "Подтверждение", MessageBoxButtons.YesNo);
-        //            if (dialogResult == DialogResult.Yes)
-        //            {
-        //                RemoveItem();
-        //            }
-        //        });
-        //    }
-        //}
+        public void BtGoToTasks() => GoToTasks();
+        public void GGoToTasks() => GoToTasks();
 
         #endregion
         #region for commands
@@ -41,49 +29,7 @@ namespace SentToDo.ViewModels
         //        }
         //    }
         //}
-
-        #endregion
-
-        public Task selectedTask { get; set; }
-
-        public ObservableCollection<Task> tasks { get; set; }
-        public WnPanelVM()
-        {
-            tasks = new ObservableCollection<Task>();
-            using (ToDoContext db = new ToDoContext())
-            {
-                List<Task> temp = db.tasks.ToList();
-                foreach (var item in temp)
-                {
-                    tasks.Add(item);
-                }
-            }
-        }
-
-        #region Update
-        public void UpdateAll()
-        {
-            using (ToDoContext db = new ToDoContext())
-            {
-                foreach (var item in tasks)
-                {
-                    db.Entry(item).State = EntityState.Modified;
-                }
-                db.SaveChanges();
-            }
-        }
-
-        #endregion
-
-        #region Properties
-        public long id { get; set; }
-        public string name { get; set; }
-        public int priority { get; set; }
-        public DateTime pushDate { get; set; }
-        public DateTime deadline { get; set; }
-        public bool isCompleted { get; set; }
-
-        public Category category { get; set; }
+        void GoToTasks() => WindowsOpener.OpenWindow("tasks");
 
         #endregion
 
@@ -95,6 +41,6 @@ namespace SentToDo.ViewModels
         //    }
         //}
 
-        public void GoToTasks() => WindowsOpener.OpenWindow("tasks");
+        
     }
 }
