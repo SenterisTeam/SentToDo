@@ -204,8 +204,6 @@
     <Compile Include="Models\Category.cs" />
     <Compile Include="Models\Task.cs" />
     <Compile Include="Models\ToDoContext.cs" />
-    <Compile Include="ViewModels\KindOfMagic\MagicAttribute.cs" />
-    <Compile Include="ViewModels\KindOfMagic\PropertyChangedMagic.cs" />
     <Compile Include="ViewModels\TaskVM.cs" />
     <Compile Include="ViewModels\WnPanelVM.cs" />
     <Compile Include="Views\WnPanel.xaml.cs">

@@ -1,13 +1,4 @@
-﻿using DevExpress.Mvvm;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using SentToDo.Models;
-using Microsoft.EntityFrameworkCore;
-using SentToDo.ViewModels.KindOfMagic;
-
-namespace SentToDo.ViewModels
+﻿namespace SentToDo.ViewModels
 {
     public class TasksVM : TaskVM
     {

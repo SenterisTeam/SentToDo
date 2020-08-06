@@ -36,8 +36,8 @@ namespace SentToDo.ViewModels
             tasks = new BindableCollection<Task>();
             using (ToDoContext db = new ToDoContext())
             {
-                List<Task> tasksTemp = db.tasks.ToList();
-                foreach (var item in tasksTemp)
+                List<Task> temp = db.tasks.ToList();
+                foreach (var item in temp)
                 {
                     tasks.Add(item);
                 }
@@ -80,13 +80,67 @@ namespace SentToDo.ViewModels
             }
 
         }
-        public string name { get; set; }
-        public int priority { get; set; }
-        public DateTime pushDate { get; set; }
-        public DateTime deadline { get; set; }
-        public bool isCompleted { get; set; }
+        public string name
+        {
+            get => _name;
+            set
+            {
+                _name = value;
+                NotifyOfPropertyChange(() => name);
+            }
 
-        public Category category { get; set; }
+        }
+        public int priority
+        {
+            get => _priority;
+            set
+            {
+                _priority = value;
+                NotifyOfPropertyChange(() => priority);
+            }
+
+        }
+        public DateTime pushDate
+        {
+            get => _pushDate;
+            set
+            {
+                _pushDate = value;
+                NotifyOfPropertyChange(() => pushDate);
+            }
+
+        }
+        public DateTime deadline
+        {
+            get => _deadline;
+            set
+            {
+                _deadline = value;
+                NotifyOfPropertyChange(() => deadline);
+            }
+
+        }
+        public bool isCompleted
+        {
+            get => _isCompleted;
+            set
+            {
+                _isCompleted = value;
+                NotifyOfPropertyChange(() => isCompleted);
+            }
+
+        }
+
+        public Category category
+        {
+            get => _category;
+            set
+            {
+                _category = value;
+                NotifyOfPropertyChange(() => category);
+            }
+
+        }
 
         #endregion
     }

@@ -1,11 +1,8 @@
-﻿using DevExpress.Mvvm;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
+﻿using Caliburn.Micro;
 using SentToDo.Models;
-using Microsoft.EntityFrameworkCore;
-using SentToDo.ViewModels.KindOfMagic;
+using System.Collections.Generic;
+using System.Linq;
+using System.Windows.Input;
 
 namespace SentToDo.ViewModels
 {
@@ -13,34 +10,31 @@ namespace SentToDo.ViewModels
     {
         #region Commands
         public void BtGoToTasks() => GoToTasks();
-        public void GGoToTasks() => GoToTasks();
+        public void GGoToTasks(MouseButtonEventArgs e)
+        {
+            if (e.LeftButton == MouseButtonState.Pressed) GoToTasks();
+        }
 
         #endregion
         #region for commands
-        //private void RemoveItem()
-        //{
-        //    using (SEWContext db = new SEWContext())
-        //    {
-        //        if (SelectedWord != null)
-        //        {
-        //            db.Entry(SelectedWord).State = EntityState.Deleted;
-        //            db.SaveChanges();
-        //            Words.Remove(SelectedWord);
-        //        }
-        //    }
-        //}
         void GoToTasks() => WindowsOpener.OpenWindow("tasks");
 
         #endregion
 
-        //private void UIElement_OnMouseDown(object sender, MouseButtonEventArgs e)
-        //{
-        //    if (e.LeftButton == MouseButtonState.Pressed)
-        //    {
-        //        GoToTasks()
-        //    }
-        //}
+        public WnPanelVM() // Max 2 tasks can be shown at the panel
+        {
+            
+            tasks = new BindableCollection<Task>();
+            using (ToDoContext db = new ToDoContext())
+            {
+                List<Task> temp = db.tasks.ToList();
+                for (byte i=0; i!=2; i++)
+                {
+                    tasks.Add(temp[0]);
+                }
+            }
+        }
 
-        
+
     }
 }

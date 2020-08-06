@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:SentToDo.Views"
+             xmlns:cal="http://www.caliburnproject.org"
              mc:Ignorable="d"
              d:DesignHeight="450" d:DesignWidth="800" Foreground="White" Width="120" Height="40">
     <UserControl.Resources>
@@ -13,7 +14,7 @@
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </UserControl.Resources>
-    <Grid x:Name="GGoToTasks" Margin="3" > <!--MouseDown="UIElement_OnMouseDown"-->
+    <Grid cal:Message.Attach="[Event MouseDown] = [Action GGoToTasks($eventArgs)]" Margin="3" > <!--MouseDown="UIElement_OnMouseDown"-->
         <Grid.RowDefinitions>
             <RowDefinition />
             <RowDefinition />
