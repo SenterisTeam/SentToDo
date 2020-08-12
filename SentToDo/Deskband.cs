@@ -3,7 +3,6 @@ using System.Runtime.InteropServices;
 using System.Windows;
 using CSDeskBand;
 using CSDeskBand.ContextMenu;
-using ExampleWpf;
 using SentToDo.Views;
 
 namespace SentToDo

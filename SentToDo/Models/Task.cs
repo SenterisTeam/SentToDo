@@ -1,10 +1,9 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
-using SentToDo.ViewModels.KindOfMagic;
 
 namespace SentToDo.Models
 {
-    public class Task : PropertyChangedMagic
+    public class Task
     {
         [Key] public long id { get; set; }
         public string name { get; set; }

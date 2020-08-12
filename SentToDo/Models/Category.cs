@@ -1,10 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using SentToDo.ViewModels.KindOfMagic;
 
 namespace SentToDo.Models
 {
-    public class Category : PropertyChangedMagic
+    public class Category
     {
         [Key] public long id { get; set; }
         public string name { get; set; }
