@@ -2,7 +2,7 @@
 using System.Windows.Controls;
 using System.Windows.Input;
 
-namespace SentToDo
+namespace SentToDo.Views
 {
     /// <summary>
     /// Interaction logic for UserControl1.xaml
