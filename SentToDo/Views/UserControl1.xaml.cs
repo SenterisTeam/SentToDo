@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System.ComponentModel;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 
@@ -25,6 +26,21 @@ namespace SentToDo.Views
         private void Settings_OnClick(object sender, RoutedEventArgs e)
         {
             new MainWindow().Show();
+        }
+
+        private void UserControl1_OnLoaded(object sender, RoutedEventArgs e)
+        {
+            App.tasksList = new BindingList<Models.Task>
+            {
+                new Models.Task {Name = "Test"},
+                new Models.Task {Name = "Test 2"},
+            };
+
+            FirstTextBlock.DataContext = App.tasksList[0];
+            FirstCheckBox.DataContext = App.tasksList[0];
+            
+            SecondTextBlock.DataContext = App.tasksList[1];
+            SecondCheckBox.DataContext = App.tasksList[1];
         }
     }
 }

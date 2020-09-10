@@ -7,8 +7,6 @@ namespace SentToDo.Views
 {
     public partial class MainWindow : Window
     {
-        private BindingList<Models.Task> _tasksList;
-
         public MainWindow()
         {
             InitializeComponent();
@@ -16,14 +14,8 @@ namespace SentToDo.Views
 
         private void MainWindow_OnLoaded(object sender, RoutedEventArgs e)
         {
-            _tasksList = new BindingList<Task>
-            {
-                new Models.Task() {Name = "Test"},
-                new Models.Task() {Name = "Test 2"},
-            };
-
-            DataGridToDoList.ItemsSource = _tasksList;
-            _tasksList.ListChanged += TasksListOnListChanged;
+            DataGridToDoList.ItemsSource = App.tasksList;
+            App.tasksList.ListChanged += TasksListOnListChanged;
         }
 
         private void TasksListOnListChanged(object sender, ListChangedEventArgs e)
