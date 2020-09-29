@@ -41,6 +41,9 @@ namespace SentToDo
                 case "tasks":
                     window = new Tasks();
                     break;
+                case "settings":
+                    window = new Settings();
+                    break;
                 default:
                     throw new Exception("Window with the name does not exist");
             }

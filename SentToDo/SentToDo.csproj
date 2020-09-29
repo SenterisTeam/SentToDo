@@ -178,7 +178,11 @@
     <Compile Include="IShell.cs" />
     <Compile Include="Models\Priority.cs" />
     <Compile Include="ShellViewModel.cs" />
+    <Compile Include="ViewModels\SettingsVM.cs" />
     <Compile Include="ViewModels\TasksVM.cs" />
+    <Compile Include="Views\Settings.xaml.cs">
+      <DependentUpon>Settings.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Tasks.xaml.cs">
       <DependentUpon>Tasks.xaml</DependentUpon>
     </Compile>
@@ -189,6 +193,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Themes\Dark.xaml" />
+    <Page Include="Views\Settings.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\Tasks.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
