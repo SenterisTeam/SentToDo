@@ -21,7 +21,7 @@ namespace SentToDo.ViewModels
             }
         }
 
-        BindableCollection<Task> _tasks = new BindableCollection<Task>();
+        BindableCollection<Task> _tasks;
         public BindableCollection<Task> tasks 
         {
             get => _tasks;
@@ -63,7 +63,7 @@ namespace SentToDo.ViewModels
         long _id;
         string _name;
         int _priority;
-        DateTime _pushDate;
+        DateTime _creationDate;
         DateTime _deadline;
         bool _isCompleted;
 
@@ -100,13 +100,13 @@ namespace SentToDo.ViewModels
             }
 
         }
-        public DateTime pushDate
+        public DateTime creationDate
         {
-            get => _pushDate;
+            get => _creationDate;
             set
             {
-                _pushDate = value;
-                NotifyOfPropertyChange(() => pushDate);
+                _creationDate = value;
+                NotifyOfPropertyChange(() => _creationDate);
             }
 
         }

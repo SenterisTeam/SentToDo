@@ -9,12 +9,30 @@
     mc:Ignorable="d"
     Title="Tasks" Height="450" Width="800">
     <Grid>
-        <DataGrid x:Name="DGExamples"
-                  HorizontalAlignment="Center" VerticalAlignment="Center" Width="602" Height="100" Margin="0,250,0,0"
+        <Border Background="#DEE0E3" Width="175" HorizontalAlignment="Left" ></Border>
+        <DataGrid x:Name="DGExamples" VerticalAlignment="Top" 
                   ItemsSource="{Binding tasks}"
-                  AutoGenerateColumns="True" RowHeaderWidth="0" MinWidth="601" >
+                  AutoGenerateColumns="True" RowHeaderWidth="0" Margin="200,40,10,0" >
             <DataGrid.Columns>
-                <DataGridTemplateColumn Header="Priority">
+                <DataGridTemplateColumn>
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <CheckBox ></CheckBox>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <DataGridTextColumn Header="Task" Binding="{Binding Path=name}" 
+                                    />
+
+                <DataGridTextColumn Header="Creation time" Binding="{Binding Path=creationDate}" 
+                                    />
+
+                <DataGridCheckBoxColumn Header="Deadline" Binding="{Binding Path=deadline}" 
+                                    />
+                <DataGridTemplateColumn Header="Category"
+                                    />
+                <DataGridTemplateColumn>
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <Border x:Name="tcolor" Background="{Binding Path=color}" />
@@ -35,15 +53,6 @@
                         </DataTemplate>
                     </DataGridTemplateColumn.CellEditingTemplate>
                 </DataGridTemplateColumn>
-                
-                <DataGridTextColumn Header="Task" Binding="{Binding Path=name}" 
-                                    />
-                
-                <DataGridTextColumn Header="Deadline" Binding="{Binding Path=deadline}" 
-                                    />
-                
-                <DataGridCheckBoxColumn Binding="{Binding Path=isCompleted}" 
-                                    />
             </DataGrid.Columns>
         </DataGrid>
     </Grid>
