@@ -8,8 +8,8 @@
     xmlns:base="clr-namespace:SentToDo"
     mc:Ignorable="d"
     Title="Tasks" Height="450" Width="800">
-    <Grid>
-        <Border Background="#DEE0E3" Width="175" HorizontalAlignment="Left" ></Border>
+    <Grid Background="#2E4052">
+        <Border Background="#28394A" Width="175" HorizontalAlignment="Left" ></Border>
         <DataGrid x:Name="DGExamples" VerticalAlignment="Top" 
                   ItemsSource="{Binding tasks}"
                   AutoGenerateColumns="True" RowHeaderWidth="0" Margin="200,40,10,0" >
