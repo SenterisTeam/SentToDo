@@ -7,10 +7,9 @@ Tested on Windows 10 x64 Version 2004
 
 ## Installing
 Compile or download SentToDo release
-Enter the dir with `SentToDo.dll` (`SentToDo\bin\Debug`) and run as admin:  
-`%SystemRoot%\Microsoft.NET\Framework64\v4.0.30319\regasm.exe /nologo /codebase SentToDo.dll`  
-After restart `explorer` and select ToDoList panel on taskbar right click menu
+Enter the dir with `.git` and run `Install.ps1`
+Select ToDoList panel on taskbar right click menu
   
 To uninstall:  
-`%SystemRoot%\Microsoft.NET\Framework64\v4.0.30319\regasm.exe /unregister /nologo /codebase SentToDo.dll`  
+`%SystemRoot%\Microsoft.NET\Framework64\v4.0.30319\regasm.exe /unregister /nologo /codebase SentToDo.dll` in `cmd.exe`  
 And restart `explorer`
