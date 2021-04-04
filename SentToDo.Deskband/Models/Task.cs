@@ -1,10 +1,9 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
-using SentToDo.ViewModels.KindOfMagic;
 
-namespace SentToDo.Models
+namespace SentToDo.Deskband.Models
 {
-    public class Task : PropertyChangedMagic
+    public class Task
     {
         [Key] public long id { get; set; }
         public string name { get; set; }
@@ -12,7 +11,5 @@ namespace SentToDo.Models
         public DateTime pushDate { get; set; } 
         public DateTime deadline { get; set; }
         public bool isCompleted { get; set; }
-
-        public Category category { get; set; }
     }
 }

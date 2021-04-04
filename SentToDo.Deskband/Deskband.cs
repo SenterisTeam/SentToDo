@@ -5,7 +5,7 @@ using CSDeskBand;
 using CSDeskBand.ContextMenu;
 using ExampleWpf;
 
-namespace SentToDo
+namespace SentToDo.Deskband
 {
     [ComVisible(true)]
     [Guid("AA01ACB3-6CCC-497C-9CE6-9211F2EDFC10")]

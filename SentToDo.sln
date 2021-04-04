@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27004.2006
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SentToDo", "SentToDo\SentToDo.csproj", "{865B7BDC-9818-4ABC-9915-D8B95043DB87}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SentToDo.Deskband", "SentToDo.Deskband\SentToDo.Deskband.csproj", "{865B7BDC-9818-4ABC-9915-D8B95043DB87}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Installer", "Installer\Installer.csproj", "{B9C2DDC6-C4D8-4674-9F05-CABC7FE7AE56}"
 EndProject

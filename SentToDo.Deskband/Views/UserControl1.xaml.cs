@@ -2,7 +2,7 @@
 using System.Windows.Controls;
 using System.Windows.Input;
 
-namespace SentToDo
+namespace SentToDo.Deskband
 {
     /// <summary>
     /// Interaction logic for UserControl1.xaml
@@ -18,13 +18,13 @@ namespace SentToDo
         {
             if (e.LeftButton == MouseButtonState.Pressed)
             {
-                new MainWindow().Show();
+                
             }
         }
 
         private void Settings_OnClick(object sender, RoutedEventArgs e)
         {
-            new MainWindow().Show();
+            
         }
     }
 }
