@@ -9,7 +9,7 @@
     <UserControl.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="../Themes/Dark.xaml" />
+                <ResourceDictionary Source="../Themes/Light.xaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </UserControl.Resources>
@@ -22,11 +22,11 @@
             <ColumnDefinition Width="*" />
             <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
-        <TextBlock Grid.Column="0" Grid.Row="0" Text="Task name 1" />
+        <TextBlock Grid.Column="0" Grid.Row="0" Text="Task name 1" Style="{DynamicResource TaskbarText}"/>
         <StackPanel Grid.Column="1" Grid.Row="0">
             <CheckBox x:Name="CheckBox1" Style="{DynamicResource TaskBar}" Height="20" Content=""/>
         </StackPanel>
-        <TextBlock Grid.Column="0" Grid.Row="1" Text="Task name 2" />
+        <TextBlock Grid.Column="0" Grid.Row="1" Text="Task name 2" Style="{DynamicResource TaskbarText}"/>
         <StackPanel Grid.Column="1" Grid.Row="1">
             <CheckBox x:Name="CheckBox2" Style="{DynamicResource TaskBar}" Height="20" Content="" />
         </StackPanel>

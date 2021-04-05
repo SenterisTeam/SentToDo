@@ -169,6 +169,7 @@
   <ItemGroup>
     <Page Include="App.xaml" />
     <Page Include="Themes\Dark.xaml" />
+    <Page Include="Themes\Light.xaml" />
     <Page Include="Views\UserControl1.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -179,6 +180,7 @@
     <Compile Include="CSDeskBand.cs" />
     <Compile Include="Deskband.cs" />
     <Compile Include="Models\Task.cs" />
+    <Compile Include="Services\Theme.cs" />
     <Compile Include="Views\UserControl1.xaml.cs">
       <DependentUpon>UserControl1.xaml</DependentUpon>
       <SubType>Code</SubType>
