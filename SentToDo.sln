@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SentToDo.Deskband", "SentTo
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Installer", "Installer\Installer.csproj", "{B9C2DDC6-C4D8-4674-9F05-CABC7FE7AE56}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SentToDo", "SentToDo\SentToDo.csproj", "{76024CD7-FDF8-4209-B093-ABA64E9DC374}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -42,6 +44,18 @@ Global
 		{B9C2DDC6-C4D8-4674-9F05-CABC7FE7AE56}.Release|x86.ActiveCfg = Release|Any CPU
 		{B9C2DDC6-C4D8-4674-9F05-CABC7FE7AE56}.Release|x86.Build.0 = Release|Any CPU
 		{B9C2DDC6-C4D8-4674-9F05-CABC7FE7AE56}.Debug|x64.Deploy.0 = Debug|Any CPU
+		{76024CD7-FDF8-4209-B093-ABA64E9DC374}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{76024CD7-FDF8-4209-B093-ABA64E9DC374}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{76024CD7-FDF8-4209-B093-ABA64E9DC374}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{76024CD7-FDF8-4209-B093-ABA64E9DC374}.Debug|x64.Build.0 = Debug|Any CPU
+		{76024CD7-FDF8-4209-B093-ABA64E9DC374}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{76024CD7-FDF8-4209-B093-ABA64E9DC374}.Debug|x86.Build.0 = Debug|Any CPU
+		{76024CD7-FDF8-4209-B093-ABA64E9DC374}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{76024CD7-FDF8-4209-B093-ABA64E9DC374}.Release|Any CPU.Build.0 = Release|Any CPU
+		{76024CD7-FDF8-4209-B093-ABA64E9DC374}.Release|x64.ActiveCfg = Release|Any CPU
+		{76024CD7-FDF8-4209-B093-ABA64E9DC374}.Release|x64.Build.0 = Release|Any CPU
+		{76024CD7-FDF8-4209-B093-ABA64E9DC374}.Release|x86.ActiveCfg = Release|Any CPU
+		{76024CD7-FDF8-4209-B093-ABA64E9DC374}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
