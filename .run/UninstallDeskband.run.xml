@@ -1,0 +1,5 @@
+﻿<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="UninstallDeskband" type="PowerShellRunType" factoryName="PowerShell" scriptUrl="$PROJECT_DIR$\SentToDo.Deskband\InstallDeskband.ps1" scriptParameters="-uninstall" workingDirectory="$PROJECT_DIR$">
+    <method v="2" />
+  </configuration>
+</component>

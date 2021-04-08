@@ -64,6 +64,7 @@
     <Compile Include="CSDeskBand.cs" />
     <Compile Include="Deskband.cs" />
     <Compile Include="Models\Task.cs" />
+    <Compile Include="Services\DataExchange.cs" />
     <Compile Include="Services\Theme.cs" />
     <Compile Include="Views\UserControl1.xaml.cs">
       <DependentUpon>UserControl1.xaml</DependentUpon>

@@ -1,7 +1,8 @@
 ﻿<component name="ProjectRunConfigurationManager">
   <configuration default="false" name="BuildAndInstallDeskband" type="PowerShellRunType" factoryName="PowerShell" scriptUrl="$PROJECT_DIR$/../SentToDo-Desktop\SentToDo.Deskband\InstallDeskband.ps1" workingDirectory="$PROJECT_DIR$">
     <method v="2">
-      <option name="Build" default="false" projectName="SentToDo.Deskband" projectPath="$PROJECT_DIR$\SentToDo.Deskband\SentToDo.Deskband.csproj" />
+      <option name="RunConfigurationTask" enabled="true" run_configuration_name="UninstallDeskband" run_configuration_type="PowerShellRunType" />
+      <option name="Build" default="false" projectName="SentToDo.Deskband" projectPath="$PROJECT_DIR$/../SentToDo-Desktop\SentToDo.Deskband\SentToDo.Deskband.csproj" />
     </method>
   </configuration>
 </component>
