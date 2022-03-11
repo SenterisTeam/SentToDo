@@ -1,0 +1,78 @@
+﻿.titileBar {
+  width: 100vw;
+  height: 32px;
+  -webkit-app-region: drag;
+  
+  button {
+    -webkit-app-region: no-drag;
+    cursor: default;
+  }
+
+  &.win {
+    display: flex;
+    background: black;
+    align-items: center;
+    
+    * {
+      color: white;
+      font: 12px/32px "Segoe UI", Arial, sans-serif;
+    }
+    
+    .title h5 {
+      text-indent: 10px;
+      margin: 0;
+    }
+    
+    .account {
+      margin-left: auto;
+      button {
+        @extend .winButton;
+        
+        svg {
+          width: 20px;
+          height: 20px;
+          margin-right: 3px;
+        }
+        .profile-bg {fill: white;}
+        .profile-fg {fill: green;}
+      }
+    }
+    
+    .buttons {
+      display: flex;
+      button {
+        width: 48px;
+        svg {
+          width: 10px;
+          height: 10px;
+          * {fill: white}
+        }
+        @extend .winButton
+      }
+    }
+  }
+}
+
+.winButton {
+  -webkit-app-region: no-drag;
+  background: none;
+  color: white;
+  border: none;
+  height: 32px;
+  transition: background-color 0.1s ease-in;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &:hover, &:focus, &:focus-visible {
+    background: rgba(255,255,255,.1);
+    outline: 0;
+    &.danger {background-color: #e81123;}
+  }
+  &:active {
+    background: rgba(255,255,255,.4
+    );
+    &.danger {background-color: #e81123;}
+  }
+}

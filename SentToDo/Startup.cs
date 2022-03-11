@@ -1,6 +1,8 @@
 using System;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using ElectronNET.API;
+using ElectronNET.API.Entities;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -62,15 +64,36 @@ namespace SentToDo
 
                 if (env.IsDevelopment())
                 {
-                    Console.WriteLine("Dev");
                     spa.UseReactDevelopmentServer(npmScript: "start");
                     spa.UseProxyToSpaDevelopmentServer("http://localhost:8080");
                 }
-                Console.WriteLine("Test");
-
             });
             
-            Task.Run(async () => await Electron.WindowManager.CreateWindowAsync());
+            Task.Run(async () =>
+            {
+                var options = new BrowserWindowOptions
+                {
+                    Frame = false
+                };
+                var window = await Electron.WindowManager.CreateWindowAsync(options);
+                Electron.IpcMain.On("close", o => { window.Close(); });
+                Electron.IpcMain.On("maximize",
+                    async o =>
+                    {
+                        if (!await window.IsMaximizedAsync()) window.Maximize();
+                        else window.Unmaximize();
+                    });
+                Electron.IpcMain.On("minimize", o => { window.Minimize(); });
+
+                window.OnMaximize += async () =>
+                {
+                    Electron.IpcMain.Send(window, "maximize-status", await window.IsMaximizedAsync());
+                };
+                window.OnUnmaximize += async () =>
+                {
+                    Electron.IpcMain.Send(window, "maximize-status", await window.IsMaximizedAsync());
+                };
+            });
         }
     }
 }
