@@ -1,5 +1,6 @@
 using System;
 using System.Diagnostics;
+using System.IO;
 using System.Threading.Tasks;
 using ElectronNET.API;
 using ElectronNET.API.Entities;
@@ -68,15 +69,18 @@ namespace SentToDo
                     spa.UseProxyToSpaDevelopmentServer("http://localhost:8080");
                 }
             });
-            
+
             Task.Run(async () =>
             {
+                // Main window
                 var options = new BrowserWindowOptions
                 {
                     Frame = false
                 };
                 var window = await Electron.WindowManager.CreateWindowAsync(options);
-                Electron.IpcMain.On("close", o => { window.Close(); });
+                
+                // Title bar buttons 
+                Electron.IpcMain.On("close", o => { window.Hide(); });
                 Electron.IpcMain.On("maximize",
                     async o =>
                     {
@@ -93,6 +97,36 @@ namespace SentToDo
                 {
                     Electron.IpcMain.Send(window, "maximize-status", await window.IsMaximizedAsync());
                 };
+
+                // Tray
+                var menu = new MenuItem[]
+                {
+                    new()
+                    {
+                        Label = "Show",
+                        Click = () => window.Show()
+                    },
+                    new()
+                    {
+                        Label = "Hide",
+                        Click = () => window.Hide()
+                    },
+                    new()
+                    {
+                        Type = MenuType.separator
+                    },
+                    new()
+                    {
+                        Label = "Exit",
+                        Click = async () => Electron.App.Exit()
+                    }
+                };
+
+                Electron.Tray.Show(Path.Combine(env.ContentRootPath, "Assets/electron_32x32.png"), menu);
+                Electron.Tray.SetToolTip("SentToDo");
+
+                Electron.Tray.OnClick += async (args, rectangle) => window.Show();
+                // Action<TrayClickEventArgs, Rectangle> onTrayClick = async (args, rectangle) => window.Show();
             });
         }
     }

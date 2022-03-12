@@ -10,7 +10,10 @@ import { ipcRenderer } from 'electron-renderer';
 const baseUrl = document.getElementsByTagName('base')[0].getAttribute('href') || '';
 const rootElement = document.getElementById('root');
 
-ipcRenderer.send("test");
+window.onbeforeunload = (e) => {
+    e.returnValue = true;
+    ipcRenderer.send("close");
+};
 
 ReactDOM.render(
     <BrowserRouter basename={baseUrl}>
