@@ -75,7 +75,9 @@ namespace SentToDo
                 // Main window
                 var options = new BrowserWindowOptions
                 {
-                    Frame = false
+                    Frame = false,
+                    Icon = Path.Combine(env.ContentRootPath, "Assets/icon_512x512png.png"),
+                    Title = "SentToDo"
                 };
                 var window = await Electron.WindowManager.CreateWindowAsync(options);
                 
@@ -122,7 +124,7 @@ namespace SentToDo
                     }
                 };
 
-                Electron.Tray.Show(Path.Combine(env.ContentRootPath, "Assets/electron_32x32.png"), menu);
+                Electron.Tray.Show(Path.Combine(env.ContentRootPath, "Assets/icon_16x16png.png"), menu);
                 Electron.Tray.SetToolTip("SentToDo");
 
                 Electron.Tray.OnClick += async (args, rectangle) => window.Show();

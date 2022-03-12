@@ -5,6 +5,7 @@
   },
   "name": "SentToDo",
   "author": "",
+  "icon": "bin/Assets/icon_256x256ico.ico",
   "singleInstance": true,
   "environment": "Production",
   "build": {
@@ -13,6 +14,9 @@
     "copyright": "Copyright © 2022",
     "buildVersion": "1.0.0",
     "compression": "maximum",
+    "win": {
+      "icon": "bin/Assets/icon_256x256ico.ico"
+    },
     "directories": {
       "output": "../../../bin/Desktop"
     },
