@@ -5,7 +5,7 @@
   },
   "name": "SentToDo",
   "author": "",
-  "icon": "bin/Assets/icon_256x256ico.ico",
+  "icon": "bin/Assets/icon256.ico",
   "singleInstance": true,
   "environment": "Production",
   "build": {
@@ -15,7 +15,7 @@
     "buildVersion": "1.0.0",
     "compression": "maximum",
     "win": {
-      "icon": "bin/Assets/icon_256x256ico.ico"
+      "icon": "bin/Assets/icon256.ico"
     },
     "directories": {
       "output": "../../../bin/Desktop"
