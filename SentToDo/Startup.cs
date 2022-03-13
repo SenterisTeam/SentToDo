@@ -120,14 +120,18 @@ namespace SentToDo
                     new()
                     {
                         Label = "Exit",
-                        Click = async () => Electron.App.Exit()
+                        Click = () => Electron.App.Exit()
                     }
                 };
 
                 Electron.Tray.Show(Path.Combine(env.ContentRootPath, "Assets/icon16.png"), menu);
                 Electron.Tray.SetToolTip("SentToDo");
-
-                Electron.Tray.OnClick += async (args, rectangle) => window.Show();
+                
+                Electron.Tray.OnClick += async (args, rectangle) =>
+                {
+                    if (await window.IsVisibleAsync()) window.Hide();
+                    else window.Show();
+                };
                 // Action<TrayClickEventArgs, Rectangle> onTrayClick = async (args, rectangle) => window.Show();
             });
         }
