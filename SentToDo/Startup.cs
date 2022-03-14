@@ -8,9 +8,12 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using SentToDo.Models;
+using Task = System.Threading.Tasks.Task;
 
 namespace SentToDo
 {
@@ -27,17 +30,23 @@ namespace SentToDo
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews();
+            services.AddDbContext<ApplicationContext>();
+            services.AddSwaggerGen();
 
             // In production, the React files will be served from this directory
             services.AddSpaStaticFiles(configuration => { configuration.RootPath = "ClientApp/build"; });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ApplicationContext dataContext)
         {
+            dataContext.Database.Migrate(); 
+            
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+                app.UseSwagger();
+                app.UseSwaggerUI();
             }
             else
             {
@@ -123,8 +132,9 @@ namespace SentToDo
                         Click = () => Electron.App.Exit()
                     }
                 };
-
-                Electron.Tray.Show(Path.Combine(env.ContentRootPath, "Assets/icon16.png"), menu);
+                
+                if (Electron.Tray.MenuItems.Count == 0)
+                    Electron.Tray.Show(Path.Combine(env.ContentRootPath, "Assets/icon16.png"), menu);
                 Electron.Tray.SetToolTip("SentToDo");
                 
                 Electron.Tray.OnClick += async (args, rectangle) =>
