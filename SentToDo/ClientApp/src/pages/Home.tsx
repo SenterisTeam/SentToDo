@@ -5,6 +5,8 @@ import {useEffect, useState} from "react";
 import useApiList from "../useApiList";
 import ToDoTaskItem from "../components/ToDoTaskItem";
 
+import styles from './Home.module.scss';
+
 function Home() {
     const [apiTasks, isLoading, error, fetchData] = useApiList<ToDoTask>(ToDoTasksService);
     const [tasks, setTasks] = useState<ToDoTask[]>()
@@ -25,9 +27,9 @@ function Home() {
 
         {isLoading && 'Loading...'}
         {error && error.message}
-        <ul>
+        <div className={styles.containter}>
             {tasks && tasks.map((v, i) => <ToDoTaskItem key={v.id} task={v} onChange={(t) => handleTaskChange(t, i)}/>)}
-        </ul>
+        </div>
     </PageTranslation>
 }
 

@@ -1,0 +1,12 @@
+﻿.item {
+  input {
+    background: transparent;
+    border: 2px solid transparent;
+    border-radius: 5px;
+    
+    &:focus, &:active {
+      outline: 0;
+      border-color: blue;
+    }
+  }
+}
