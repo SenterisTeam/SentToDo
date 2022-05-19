@@ -6,17 +6,23 @@
     "prestart": "node aspnetcore-https && node aspnetcore-react",
     "start": "vite",
     "build": "tsc && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "openapi": "cross-env NODE_TLS_REJECT_UNAUTHORIZED=0 openapi -i https://localhost:7256/swagger/v1/swagger.json -o src/api"
   },
   "dependencies": {
+    "dexie": "^3.2.2",
+    "dexie-react-hooks": "^1.1.1",
     "react": "^18.0.0",
-    "react-dom": "^18.0.0"
+    "react-dom": "^18.0.0",
+    "react-router-dom": "^6.3.0"
   },
   "devDependencies": {
     "@types/node": "^17.0.34",
     "@types/react": "^18.0.0",
     "@types/react-dom": "^18.0.0",
     "@vitejs/plugin-react": "^1.3.0",
+    "cross-env": "^7.0.3",
+    "openapi-typescript-codegen": "^0.22.0",
     "sass": "^1.51.0",
     "typescript": "^4.6.3",
     "vite": "^2.9.9",

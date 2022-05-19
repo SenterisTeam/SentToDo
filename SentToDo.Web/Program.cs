@@ -2,7 +2,9 @@ using System.Reflection;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
+using SentToDo.Web.Models;
 using Serilog;
+using Swashbuckle.AspNetCore.SwaggerGen;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,6 +21,8 @@ builder.Services.AddControllersWithViews().AddNewtonsoftJson(options =>
 
 builder.Services.AddSwaggerGen(c =>
 {
+    c.DocumentFilter<CustomModelDocumentFilter<ToDoTask>>();
+    
     c.ResolveConflictingActions(apiDescriptions => apiDescriptions.First());
     c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
@@ -78,3 +82,12 @@ app.MapControllerRoute(
 app.MapFallbackToFile("index.html");
 
 app.Run();
+
+
+public class CustomModelDocumentFilter<T> : IDocumentFilter where T : class
+{
+    public void Apply(OpenApiDocument openapiDoc, DocumentFilterContext context)
+    {
+        context.SchemaGenerator.GenerateSchema(typeof(T), context.SchemaRepository);
+    }
+}

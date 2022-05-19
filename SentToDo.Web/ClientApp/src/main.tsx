@@ -3,7 +3,8 @@ import ReactDOM from 'react-dom/client'
 import App from './App'
 import './index.css'
 
-import { registerSW } from "virtual:pwa-register";
+import {registerSW} from "virtual:pwa-register";
+import {BrowserRouter} from "react-router-dom";
 
 if ("serviceWorker" in navigator) {
     // && !/localhost/.test(window.location)) {
@@ -11,7 +12,9 @@ if ("serviceWorker" in navigator) {
 }
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>
+    <React.StrictMode>
+        <BrowserRouter>
+            <App/>
+        </BrowserRouter>
+    </React.StrictMode>
 )

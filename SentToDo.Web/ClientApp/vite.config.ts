@@ -24,7 +24,8 @@ export default defineConfig(({command, mode}) => {
                 name: 'SentToDo',
                 short_name: 'STD',
                 description: 'Progressive web todo',
-                theme_color: '#ffffff',
+                theme_color: '#016fb8',
+                background_color: '#000000',
                 icons: [
                     {
                         "src": "/android-chrome-192x192.png",

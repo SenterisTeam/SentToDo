@@ -11,5 +11,3 @@ cleanupOutdatedCaches()
 
 precacheAndRoute(self.__WB_MANIFEST)
 registerRoute(new NavigationRoute(createHandlerBoundToURL('/index.html')))
-
-console.log("Custom worker 4")
