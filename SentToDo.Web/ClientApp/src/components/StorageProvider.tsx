@@ -1,5 +1,6 @@
 import {createContext, useCallback, useContext, useEffect, useRef, useState} from "react";
 import {HistoryAction, ToDoHistoryEntry, ToDoTask} from "../api";
+import {applyHistoryToOtherTabs, applyHistoryToState, applyHistroyToDb } from "../data/applyHistory";
 import {db} from "../data/db";
 
 const c = new BroadcastChannel('update_channel');
@@ -42,13 +43,14 @@ function StorageProvider(props: { children: React.ReactNode | ((s: Storage) => R
     const pendingHistory = useRef<ToDoHistoryEntry[]>([])
 
     const onMessage = (ev: MessageEvent) => {
-        if (ev.data.type == "DB_UPDATED" && ev.source != window) db.tasks.toArray().then((t) => setTasks(t))
+        console.log("Message received", ev.data)
+        if (ev.data.type == "HISTORY" && ev.source != window) applyHistoryToState(ev.data.history, [tasks, setTasks])
     };
 
     useEffect(() => {
         c.addEventListener("message", onMessage)
         return () => c.removeEventListener("message", onMessage)
-    }, [])
+    }, [tasks])
     
     const onBeforeUnload = (ev: BeforeUnloadEvent) => {
         if (savingState != SavingState.AWAITING_SAVE) return;
@@ -71,12 +73,17 @@ function StorageProvider(props: { children: React.ReactNode | ((s: Storage) => R
             setSavingState(SavingState.SAVING)
             setHistory(history.concat(pendingHistory.current))
             db.history.bulkPut(pendingHistory.current)
+            
+            applyHistroyToDb(pendingHistory.current)
+            applyHistoryToOtherTabs(pendingHistory.current)
+            
             pendingHistory.current = []
             setSavingState(SavingState.SAVED)
         }, 5000)
     }
     useEffect(() => {
         db.tasks.toArray().then((t) => setTasks(t))
+        db.history.toArray().then((h) => setHistory(h))
     }, [])
 
     const addTask = (t: ToDoTask) => {
@@ -90,8 +97,8 @@ function StorageProvider(props: { children: React.ReactNode | ((s: Storage) => R
         }
         pendingHistory.current.push(historyEntry)
         
-        db.tasks.add(t).then(postUpdate)
-        setTasks(tasks.concat(t))
+        applyHistoryToOtherTabs([historyEntry])
+        applyHistoryToState([historyEntry], [tasks, setTasks])
         
         startAwaiting()
     }
@@ -105,9 +112,9 @@ function StorageProvider(props: { children: React.ReactNode | ((s: Storage) => R
             newValue: t
         }
         pendingHistory.current = (oldHistoryEntry ? pendingHistory.current.map(v => v.oldValue?.timestamp == t.timestamp ? historyEntry : v) : pendingHistory.current.concat(historyEntry))
-        
-        db.tasks.put(t).then(postUpdate)
-        setTasks(tasks.map(v => v.timestamp == t.timestamp ? t : v))
+
+        applyHistoryToOtherTabs([historyEntry])
+        applyHistoryToState([historyEntry], [tasks, setTasks])
         
         startAwaiting()
     }
@@ -121,9 +128,9 @@ function StorageProvider(props: { children: React.ReactNode | ((s: Storage) => R
                 newValue: undefined
             }
             pendingHistory.current.push(historyEntry)
-            
-            db.tasks.delete(t.timestamp).then(postUpdate)
-            setTasks(tasks.filter(v => v.timestamp !== t.timestamp))
+
+            applyHistoryToOtherTabs([historyEntry])
+            applyHistoryToState([historyEntry], [tasks, setTasks])
             
             startAwaiting()
         }
