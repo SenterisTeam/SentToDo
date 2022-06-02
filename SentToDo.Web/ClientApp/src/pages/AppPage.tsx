@@ -1,5 +1,5 @@
 import {Outlet} from "react-router-dom";
-import StorageProvider from "../components/StorageProvider";
+import StorageProvider, {SavingState} from "../components/StorageProvider";
 
 export interface Props {
 
@@ -7,8 +7,13 @@ export interface Props {
 
 function AppPage(props: Props) {
     return <StorageProvider>
-        <nav>Nav</nav>
-        <Outlet/>
+        {(s) => {
+            return <>
+                {s.savingState === SavingState.AWAITING_SAVE && <div>Awaitng...</div>}
+                {s.savingState === SavingState.SAVED && <div>Saved...</div>}
+                <Outlet/>
+            </>
+        }}
     </StorageProvider>
 }
 

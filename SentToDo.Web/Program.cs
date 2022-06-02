@@ -22,6 +22,7 @@ builder.Services.AddControllersWithViews().AddNewtonsoftJson(options =>
 builder.Services.AddSwaggerGen(c =>
 {
     c.DocumentFilter<CustomModelDocumentFilter<ToDoTask>>();
+    c.DocumentFilter<CustomModelDocumentFilter<ToDoHistoryEntry>>();
     
     c.ResolveConflictingActions(apiDescriptions => apiDescriptions.First());
     c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
