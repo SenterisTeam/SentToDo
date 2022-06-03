@@ -1,16 +1,81 @@
+using System.IdentityModel.Tokens.Jwt;
 using System.Reflection;
+using System.Security.Claims;
+using System.Text;
+using Microsoft.AspNetCore.Authentication.Google;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.CookiePolicy;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
+using SentToDo.Web.Controllers;
+using SentToDo.Web.Data;
 using SentToDo.Web.Models;
+using SentToDo.Web.Auth;
 using Serilog;
 using Swashbuckle.AspNetCore.SwaggerGen;
+using JwtRegisteredClaimNames = Microsoft.IdentityModel.JsonWebTokens.JwtRegisteredClaimNames;
 
 var builder = WebApplication.CreateBuilder(args);
+AuthOptions.KEY = builder.Configuration["JWT:Key"];
 
 // Add services to the container.
 
 builder.Host.UseSerilog((ctx, lc) => lc.WriteTo.Console());
+
+builder.Services.AddDbContext<ApplicationDbContext>(c => c.UseSqlite("Filename=DataBase.db"));
+
+builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
+    {
+        options.User.RequireUniqueEmail = true;
+        options.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._";
+    })
+    .AddEntityFrameworkStores<ApplicationDbContext>()
+    .AddDefaultTokenProviders();
+
+builder.Services.Configure<IdentityOptions>(opts => {
+    opts.Password.RequiredLength = 8;
+    opts.Password.RequireNonAlphanumeric = false;
+    opts.Password.RequireLowercase = false;
+    opts.Password.RequireUppercase = true;
+    opts.Password.RequireDigit = true;
+});
+
+
+// Adding Authentication
+builder.Services.AddAuthentication(options =>
+    {
+        options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+        options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+        options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+    })
+
+// Adding Jwt Bearer
+    .AddJwtBearer(options =>
+    {
+        options.SaveToken = true;
+        options.RequireHttpsMetadata = false;
+        options.TokenValidationParameters = new TokenValidationParameters()
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidAudience = AuthOptions.AUDIENCE,
+            ValidIssuer = AuthOptions.ISSUER,
+            IssuerSigningKey = AuthOptions.GetSymmetricSecurityKey()
+        };
+    }).AddOAuth<GoogleOptions, ReplacedGoogleHandler>(GoogleDefaults.AuthenticationScheme, GoogleDefaults.DisplayName, googleOptions =>
+    {
+        googleOptions.ClientId = builder.Configuration["Authentication:Google:ClientId"];
+        googleOptions.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"];
+        googleOptions.CallbackPath = "/oauth/google";
+
+        googleOptions.CorrelationCookie.Path = "/";
+            
+        googleOptions.Events.OnTicketReceived += ctx => AuthUtils.OnTicketReceived(ctx);
+    });;
 
 builder.Services.AddControllersWithViews().AddNewtonsoftJson(options =>
 {
@@ -82,6 +147,9 @@ app.MapControllerRoute(
 
 app.MapFallbackToFile("index.html");
 
+app.UseAuthentication();
+app.UseAuthorization();
+
 app.Run();
 
 
@@ -91,4 +159,12 @@ public class CustomModelDocumentFilter<T> : IDocumentFilter where T : class
     {
         context.SchemaGenerator.GenerateSchema(typeof(T), context.SchemaRepository);
     }
+}
+
+public class AuthOptions
+{
+    public const string ISSUER = "SentToDo";
+    public const string AUDIENCE = "SentToDo.Client";
+    public static string KEY = "";
+    public static SymmetricSecurityKey GetSymmetricSecurityKey() => new(Encoding.UTF8.GetBytes(KEY));
 }
