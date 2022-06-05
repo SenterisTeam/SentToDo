@@ -54,11 +54,14 @@ public class AuthController : ControllerBase
     [Route("register")]
     public async Task<ActionResult<Response>> Register([FromBody] RegisterModel model)
     {
-        var userExists = await _userManager.FindByNameAsync(model.Username) ?? await _userManager.FindByEmailAsync(model.Email);
-        if (userExists != null)
-            return StatusCode(StatusCodes.Status400BadRequest,
-                new Response { Status = "Error", Message = "User already exists!" });
-    
+        var userExists = await _userManager.FindByNameAsync(model.Username);
+        if (userExists != null) ModelState.AddModelError("", "Username already taken");
+        
+        userExists = await _userManager.FindByEmailAsync(model.Email);
+        if (userExists != null) ModelState.AddModelError("", "Email already taken");
+
+        if (!ModelState.IsValid) return (ActionResult)_apiBehaviorOptions.Value.InvalidModelStateResponseFactory(ControllerContext);
+
         ApplicationUser user = new()
         {
             Email = model.Email,
@@ -99,9 +102,9 @@ public class AuthController : ControllerBase
         return Challenge(new AuthenticationProperties { RedirectUri = "/app" }, provider);
     }
     
-    [HttpGet("info")]
+    [HttpGet("me")]
     [Authorize]
-    public async Task<ActionResult<ApplicationUser>> Info()
+    public async Task<ActionResult<ApplicationUser>> CurrentUserInfo()
     {
         var user = await _userManager.FindByNameAsync(User.Identity.Name);
         return user;

@@ -46,20 +46,19 @@ requestBody?: RegisterModel,
     }
 
     /**
-     * @param formData 
+     * @param provider 
      * @returns any Success
      * @throws ApiError
      */
-    public static postApiAuthOauth(
-formData?: {
-provider?: string;
-},
+    public static getApiAuthOauth(
+provider?: string,
 ): CancelablePromise<any> {
         return __request(OpenAPI, {
-            method: 'POST',
+            method: 'GET',
             url: '/api/auth/oauth',
-            formData: formData,
-            mediaType: 'multipart/form-data',
+            query: {
+                'provider': provider,
+            },
         });
     }
 
@@ -67,10 +66,10 @@ provider?: string;
      * @returns ApplicationUser Success
      * @throws ApiError
      */
-    public static getApiAuthInfo(): CancelablePromise<ApplicationUser> {
+    public static getApiAuthMe(): CancelablePromise<ApplicationUser> {
         return __request(OpenAPI, {
             method: 'GET',
-            url: '/api/auth/info',
+            url: '/api/auth/me',
         });
     }
 

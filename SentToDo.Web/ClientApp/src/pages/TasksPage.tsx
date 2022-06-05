@@ -8,10 +8,6 @@ export interface Props {
 
 function TasksPage(props: Props) {
     const {tasks, addTask, editTask, removeTask} = useStorage()
-
-    useEffect(() => {
-        console.log("search");
-    }, [])
     
     return <>
         <button onClick={() => addTask({name: "Test"})}>Add</button>

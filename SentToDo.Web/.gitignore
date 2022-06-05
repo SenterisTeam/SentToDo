@@ -230,3 +230,7 @@ _Pvt_Extensions
 
 # FAKE - F# Make
 .fake/
+
+DataBase.db
+DataBase.db-shm
+DataBase.db-wal

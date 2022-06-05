@@ -13,15 +13,16 @@ public static class AuthUtils
     public static async Task OnTicketReceived(TicketReceivedContext ctx)
     {
         var userManager = ctx.HttpContext.RequestServices.GetService<UserManager<ApplicationUser>>();
+
         var email = ctx.Principal.Claims.First(c => c.Type == ClaimTypes.Email).Value;
         var name = email.Split('@')[0];
-        
+
         var user = await userManager.FindByEmailAsync(email);
         if (user == null)
         {
             var userExists = await userManager.FindByNameAsync(name);
             if (userExists != null) name = Guid.NewGuid().ToString();
-            
+
             user = new()
             {
                 Email = email,
@@ -31,10 +32,18 @@ public static class AuthUtils
             };
             var result = await userManager.CreateAsync(user);
         }
-        
+        else
+        {
+            if (!user.EmailConfirmed)
+            {
+                user.EmailConfirmed = true;
+                await userManager.UpdateAsync(user);
+            }
+        }
+
         var authClaims = new List<Claim>
         {
-            new(ClaimTypes.Name, name),
+            new(ClaimTypes.Name, user.UserName),
             new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
         };
 
