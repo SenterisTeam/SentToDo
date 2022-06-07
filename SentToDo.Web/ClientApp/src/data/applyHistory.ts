@@ -1,4 +1,4 @@
-﻿import {HistoryAction, ToDoHistoryEntry, ToDoTask} from "../api";
+﻿import {HistoryAction, ObjectType, SyncData, ToDoHistoryEntry, ToDoTask} from "../api";
 import {db} from "./db";
 
 const c = new BroadcastChannel('update_channel');
@@ -50,6 +50,13 @@ export const applyHistoryToState = (h: ToDoHistoryEntry[], [tasks, setTasks]: [T
     })
 }
 
-export const applyHistoryToServer = () => {
-    // ToDo: Implement
+export const applyHistoryToServer = (h: ToDoHistoryEntry[], socket: WebSocket) => {
+    if(socket.readyState == WebSocket.OPEN)
+        h.forEach((e) => {
+            const data: SyncData = {
+                objectType: ObjectType.TO_DO_HISTORY_ENTRY,
+                syncObject: e
+            }
+            socket.send(JSON.stringify(data))
+        })
 }

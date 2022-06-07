@@ -24,6 +24,7 @@ function LoginForm(props: Props) {
     
     const login = (event: FormEvent) => {
         event.preventDefault()
+        if (auth.token) auth.setToken(null)
         AuthService.postApiAuthLogin(loginModel).then(response => {
             auth.setToken(response.token);
             navigate("/app", {replace: true})

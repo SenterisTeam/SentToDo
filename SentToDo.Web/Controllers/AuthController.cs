@@ -106,7 +106,7 @@ public class AuthController : ControllerBase
     [Authorize]
     public async Task<ActionResult<ApplicationUser>> CurrentUserInfo()
     {
-        var user = await _userManager.FindByNameAsync(User.Identity.Name);
+        var user = HttpContext.GetUser();
         return user;
     }
 

@@ -36,8 +36,6 @@ export default function AuthProvider(props: { children: React.ReactNode }) {
             e.preventDefault()
         }
     }
-    
-    console.log("Render", isAuthenticated, userLoading, token)
 
     useEffect(() => {
         OpenAPI.TOKEN = token || undefined
@@ -48,10 +46,10 @@ export default function AuthProvider(props: { children: React.ReactNode }) {
                 setUser(u)
                 setUserLoading(false)
 
-                if (!u) setToken(undefined)
+                if (!u) setToken(null)
             }).catch((e) => {
                 setUserLoading(false)
-                if (!(e instanceof TypeError)) setToken(undefined)
+                if (!(e instanceof TypeError)) setToken(null)
             })
         } else if (token === null) {
             localStorage.removeItem("token")

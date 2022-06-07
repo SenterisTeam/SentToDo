@@ -2,7 +2,12 @@
 /* tslint:disable */
 /* eslint-disable */
 
+import type { DbToDoHistoryEntry } from './DbToDoHistoryEntry';
+import type { DbToDoTask } from './DbToDoTask';
+
 export type ApplicationUser = {
+    toDoTasks?: Array<DbToDoTask> | null;
+    toDoHistory?: Array<DbToDoHistoryEntry> | null;
     id?: string | null;
     userName?: string | null;
     normalizedUserName?: string | null;

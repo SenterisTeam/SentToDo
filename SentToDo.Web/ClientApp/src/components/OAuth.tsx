@@ -54,6 +54,7 @@ function OAuth(props: Props) {
      const onStartOAuth = (provider: Provider) => {
          if (!authProcessing) {
              setAuthProcessing(true)
+             if (auth.token) auth.setToken(null)
              const popup = window.open('', `${provider.displayName} OAuth`, "scrollbars=no,resizable=no,status=no,location=no,toolbar=no,menubar=no,\n" + "width=500,height=600,top=100,left=200")
              try {
                  if(popup && popup.location.href === 'about:blank'){

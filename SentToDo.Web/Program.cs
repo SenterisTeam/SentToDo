@@ -17,6 +17,7 @@ using SentToDo.Web.Controllers;
 using SentToDo.Web.Data;
 using SentToDo.Web.Models;
 using SentToDo.Web.Auth;
+using SentToDo.Web.Mapping;
 using Serilog;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using JwtRegisteredClaimNames = Microsoft.IdentityModel.JsonWebTokens.JwtRegisteredClaimNames;
@@ -27,6 +28,8 @@ AuthOptions.KEY = builder.Configuration["JWT:Key"];
 // Add services to the container.
 
 builder.Host.UseSerilog((ctx, lc) => lc.WriteTo.Console());
+
+builder.Services.AddAutoMapper(typeof(AppMappingProfile));
 
 builder.Services.AddDbContext<ApplicationDbContext>(c => c.UseSqlite("Filename=DataBase.db"));
 
@@ -68,6 +71,45 @@ builder.Services.AddAuthentication(options =>
             ValidIssuer = AuthOptions.ISSUER,
             IssuerSigningKey = AuthOptions.GetSymmetricSecurityKey()
         };
+        
+        options.Events = new JwtBearerEvents
+        {
+            OnMessageReceived = context =>
+            {
+                if (context.Request.Headers.ContainsKey("Sec-WebSocket-Protocol") && context.HttpContext.WebSockets.IsWebSocketRequest)
+                {
+                    var header = context.Request.Headers["Sec-WebSocket-Protocol"].ToString();
+                    var newHeader = header;
+                    foreach (var s in header.Split(','))
+                    {
+                        if (s.Trim().StartsWith("Bearer-"))
+                        {
+                            context.Token = s.Trim().Substring(7);
+                            newHeader = String.Join( ", ", newHeader.Split(",").Where(x => x != s).ToArray());
+                            break;
+                        }
+                    }
+                    
+                    context.Request.Headers["Sec-WebSocket-Protocol"] = newHeader;
+                }
+                return Task.CompletedTask;
+            },
+            OnTokenValidated = async context =>
+            {
+                var name = context.Principal.Claims.Where(x => x.Type == ClaimTypes.Name).FirstOrDefault().Value;
+                var userManager = context.HttpContext.RequestServices.GetService<UserManager<ApplicationUser>>();
+                var user = await userManager.FindByNameAsync(name);
+                    
+                if (user == null)
+                {
+                    context.Fail("Invalid token");
+                }
+                else
+                {
+                    context.HttpContext.Items["User"] = user;
+                }
+            }
+        };
     }).AddOAuth<GoogleOptions, ReplacedGoogleHandler>(GoogleDefaults.AuthenticationScheme, GoogleDefaults.DisplayName, googleOptions =>
     {
         googleOptions.ClientId = builder.Configuration["Authentication:Google:ClientId"];
@@ -90,6 +132,9 @@ builder.Services.AddSwaggerGen(c =>
 {
     c.DocumentFilter<CustomModelDocumentFilter<ToDoTask>>();
     c.DocumentFilter<CustomModelDocumentFilter<ToDoHistoryEntry>>();
+    c.DocumentFilter<CustomModelDocumentFilter<SyncData>>();
+    
+    c.MapType<Object>(() => new OpenApiSchema { Type = "object" });
 
     c.ResolveConflictingActions(apiDescriptions => apiDescriptions.First());
     c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
@@ -124,6 +169,8 @@ builder.Services.Configure<RouteOptions>(options => options.LowercaseUrls = true
 
 var app = builder.Build();
 
+app.UseWebSockets();
+
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
@@ -151,6 +198,7 @@ app.MapFallbackToFile("index.html");
 
 app.UseAuthentication();
 app.UseAuthorization();
+
 
 app.Run();
 

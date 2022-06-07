@@ -50,6 +50,7 @@ export default defineConfig(({command, mode}) => {
                 key: env['SSL_KEY_FILE']
             },
             proxy: {
+                '/api/sync/ws': {target: 'wss://localhost:7256', secure: false, ws: true},
                 '/api': {target: 'https://localhost:7256', secure: false},
                 '/swagger': {target: 'https://localhost:7256', secure: false},
             }

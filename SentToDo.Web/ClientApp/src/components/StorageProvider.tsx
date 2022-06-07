@@ -1,7 +1,13 @@
 import {createContext, useCallback, useContext, useEffect, useRef, useState} from "react";
-import {HistoryAction, ToDoHistoryEntry, ToDoTask} from "../api";
-import {applyHistoryToOtherTabs, applyHistoryToState, applyHistroyToDb } from "../data/applyHistory";
+import {HistoryAction, ObjectType, SyncData, ToDoHistoryEntry, ToDoTask} from "../api";
+import {
+    applyHistoryToOtherTabs,
+    applyHistoryToServer,
+    applyHistoryToState,
+    applyHistroyToDb
+} from "../data/applyHistory";
 import {db} from "../data/db";
+import { useAuth } from "./AuthProvider";
 
 const c = new BroadcastChannel('update_channel');
 
@@ -18,6 +24,13 @@ export enum SavingState {
     SAVING,
     SAVED,
     ERROR
+}
+
+export enum ConnectinState {
+    CONNECTED,
+    CONNECTING,
+    DISCONNECTED,
+    START_CONNECTING
 }
 
 const StorageContext = createContext<Storage | undefined>(undefined);
@@ -41,6 +54,11 @@ function StorageProvider(props: { children: React.ReactNode | ((s: Storage) => R
     const savingTimeout = useRef<number | undefined>(undefined)
     const [history, setHistory] = useState<ToDoHistoryEntry[]>([])
     const pendingHistory = useRef<ToDoHistoryEntry[]>([])
+    
+    const auth = useAuth()
+    const [socket, setSocket] = useState<WebSocket>();
+    const [connectionState, setConnectionState] = useState<ConnectinState>(ConnectinState.DISCONNECTED)
+    const reconnectTimeout = useRef<number | undefined>(undefined)
 
     const onMessage = (ev: MessageEvent) => {
         console.log("Message received", ev.data)
@@ -76,10 +94,11 @@ function StorageProvider(props: { children: React.ReactNode | ((s: Storage) => R
             
             applyHistroyToDb(pendingHistory.current)
             applyHistoryToOtherTabs(pendingHistory.current)
+            if (socket) applyHistoryToServer(pendingHistory.current, socket)
             
             pendingHistory.current = []
             setSavingState(SavingState.SAVED)
-        }, 5000)
+        }, 1000)
     }
     useEffect(() => {
         db.tasks.toArray().then((t) => setTasks(t))
@@ -135,6 +154,67 @@ function StorageProvider(props: { children: React.ReactNode | ((s: Storage) => R
             startAwaiting()
         }
     }
+    
+    useEffect(() => {
+        if (auth.isAuthenticated && connectionState == ConnectinState.START_CONNECTING) {
+            const url = new URL(window.location.href)
+            console.log(window.location.href)
+            url.protocol = url.protocol === "http:" ? "ws:" : "wss:"
+            url.pathname = "/api/sync/ws"
+            
+            setSocket(new WebSocket(url, ["client", `Bearer-${auth.token}`]))
+            setConnectionState(ConnectinState.CONNECTING)
+        } else {
+            if (connectionState == ConnectinState.DISCONNECTED || !auth.isAuthenticated) {
+                socket?.close()
+                setSocket(undefined)
+                setConnectionState(ConnectinState.DISCONNECTED)
+            }
+        }
+    }, [auth.isAuthenticated, connectionState])
+    
+    useEffect(() => {
+        if (auth.isAuthenticated && connectionState == ConnectinState.DISCONNECTED && !reconnectTimeout.current) {
+            setTimeout(() => {setConnectionState(ConnectinState.START_CONNECTING)}, 1000)
+        } else {
+            if (!auth.isAuthenticated || connectionState != ConnectinState.DISCONNECTED && reconnectTimeout.current) clearTimeout(reconnectTimeout.current)
+        }
+        
+        return () => {if (reconnectTimeout.current) clearTimeout(reconnectTimeout.current)}
+    }, [auth.isAuthenticated, connectionState])
+    
+    useEffect(() => {
+        if (socket) {
+            socket.onopen = () => {
+                setConnectionState(ConnectinState.CONNECTED)
+                console.log("Connected to server")
+
+                applyHistoryToServer(history.filter(h => !h.id), socket)
+            }
+
+            socket.onmessage = (e) => {
+                var syncData = JSON.parse(e.data) as SyncData
+                console.log(syncData)
+                if (syncData.objectType && syncData.syncObject) {
+                    switch (syncData.objectType) {
+                        case ObjectType.TO_DO_HISTORY_ENTRY:
+                            const newHistory = syncData.syncObject as ToDoHistoryEntry
+                            
+                            if (history.find(h => h.timestamp == newHistory)) setHistory(history.map(h => h.timestamp == newHistory.timestamp ? newHistory : h))
+                            else setHistory(history.concat(newHistory))
+                            
+                            db.history.put(newHistory)
+                            break
+                    }
+                }
+            }
+
+            socket.onclose = (e) => {
+                console.log(e)
+                setConnectionState(ConnectinState.DISCONNECTED)
+            }
+        }
+    }, [socket, history])
     
     const storage: Storage = {tasks: tasks || [], addTask, editTask, removeTask, savingState}
     return <StorageContext.Provider

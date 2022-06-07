@@ -28,6 +28,7 @@ function LoginForm(props: Props) {
     
     const register = (event: FormEvent) => {
         event.preventDefault()
+        if (auth.token) auth.setToken(null)
         AuthService.postApiAuthRegister(registerModel).then(() => {
             AuthService.postApiAuthLogin({username: registerModel.username, password: registerModel.password}).then(response => {
                 auth.setToken(response.token);

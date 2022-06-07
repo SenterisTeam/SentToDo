@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authentication;
+using SentToDo.Web.Models;
 
 namespace SentToDo.Web.Extensions;
 
@@ -29,4 +30,6 @@ public static class HttpContextExtensions
             where string.Equals(scheme.Name, provider)
             select scheme).Any();
     }
+    
+    public static ApplicationUser GetUser(this HttpContext content) => content.Items["User"] as ApplicationUser;
 }
