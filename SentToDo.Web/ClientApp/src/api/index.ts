@@ -7,6 +7,7 @@ export { OpenAPI } from './core/OpenAPI';
 export type { OpenAPIConfig } from './core/OpenAPI';
 
 export type { ApplicationUser } from './models/ApplicationUser';
+export type { DataPackage } from './models/DataPackage';
 export type { DbToDoHistoryEntry } from './models/DbToDoHistoryEntry';
 export type { DbToDoTask } from './models/DbToDoTask';
 export { HistoryAction } from './models/HistoryAction';

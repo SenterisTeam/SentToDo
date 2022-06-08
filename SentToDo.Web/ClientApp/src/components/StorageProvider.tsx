@@ -1,5 +1,5 @@
 import {createContext, useCallback, useContext, useEffect, useRef, useState} from "react";
-import {HistoryAction, ObjectType, SyncData, ToDoHistoryEntry, ToDoTask} from "../api";
+import {HistoryAction, ObjectType, OpenAPI, SyncData, SyncService, ToDoHistoryEntry, ToDoTask} from "../api";
 import {
     applyHistoryToOtherTabs,
     applyHistoryToServer,
@@ -59,6 +59,7 @@ function StorageProvider(props: { children: React.ReactNode | ((s: Storage) => R
     const [socket, setSocket] = useState<WebSocket>();
     const [connectionState, setConnectionState] = useState<ConnectinState>(ConnectinState.DISCONNECTED)
     const reconnectTimeout = useRef<number | undefined>(undefined)
+    const [lastSync, setLastSync] = useState<number>(localStorage.getItem('lastSync') ? parseInt(localStorage.getItem('lastSync') as string) : 0)
 
     const onMessage = (ev: MessageEvent) => {
         console.log("Message received", ev.data)
@@ -94,7 +95,7 @@ function StorageProvider(props: { children: React.ReactNode | ((s: Storage) => R
             
             applyHistroyToDb(pendingHistory.current)
             applyHistoryToOtherTabs(pendingHistory.current)
-            if (socket) applyHistoryToServer(pendingHistory.current, socket)
+            if (socket) applyHistoryToServer(pendingHistory.current, socket, setLastSync)
             
             pendingHistory.current = []
             setSavingState(SavingState.SAVED)
@@ -156,6 +157,34 @@ function StorageProvider(props: { children: React.ReactNode | ((s: Storage) => R
     }
     
     useEffect(() => {
+        localStorage.setItem('lastSync', lastSync.toString())
+    }, [lastSync])
+    
+    useEffect(() => {
+        if (lastSync == 0 && auth.isAuthenticated && !auth.userLoading) {
+            setLastSync(Date.now())
+            SyncService.getApiSyncGetcurrentdata().then(data => {
+                if(data.toDoTasks) {
+                    const history = data.toDoTasks.map(t => ({
+                        timestamp: Date.now(),
+                        action: HistoryAction.ADDED,
+                        oldValue: undefined,
+                        newValue: t
+                    }))
+                    
+                    applyHistoryToState(history, [tasks, setTasks])
+                    applyHistroyToDb(history)
+                    applyHistoryToOtherTabs(history)
+                }
+            })
+        }
+        
+        if (!auth.isAuthenticated && !auth.userLoading) {
+            setLastSync(0);
+        }
+    }, [lastSync, auth.isAuthenticated, auth.userLoading])
+    
+    useEffect(() => {
         if (auth.isAuthenticated && connectionState == ConnectinState.START_CONNECTING) {
             const url = new URL(window.location.href)
             console.log(window.location.href)
@@ -189,13 +218,14 @@ function StorageProvider(props: { children: React.ReactNode | ((s: Storage) => R
                 setConnectionState(ConnectinState.CONNECTED)
                 console.log("Connected to server")
 
-                applyHistoryToServer(history.filter(h => !h.id), socket)
+                applyHistoryToServer(history.filter(h => !h.id), socket, setLastSync)
             }
 
             socket.onmessage = (e) => {
                 var syncData = JSON.parse(e.data) as SyncData
                 console.log(syncData)
                 if (syncData.objectType && syncData.syncObject) {
+                    setLastSync(Date.now())
                     switch (syncData.objectType) {
                         case ObjectType.TO_DO_HISTORY_ENTRY:
                             const newHistory = syncData.syncObject as ToDoHistoryEntry
@@ -204,7 +234,11 @@ function StorageProvider(props: { children: React.ReactNode | ((s: Storage) => R
                             else setHistory(history.concat(newHistory))
                             
                             db.history.put(newHistory)
-                            break
+                            
+                            applyHistoryToState([newHistory], [tasks, setTasks])
+                            applyHistroyToDb([newHistory])
+                            
+                            break;
                     }
                 }
             }

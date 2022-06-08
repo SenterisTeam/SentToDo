@@ -42,63 +42,81 @@ public class SyncController : ControllerBase
             var socketId = Guid.NewGuid().ToString();
             _clients.TryAdd(socketId, new(webSocket, User.Identity.Name));
 
-            while (!(bool)webSocket?.CloseStatus.HasValue)
+            try
             {
-                if (ct.IsCancellationRequested) break;
-
-                var result = await webSocket.ReadString(ct);
-
-                if (webSocket.State != WebSocketState.Open) break;
-                if (string.IsNullOrEmpty(result)) continue;
-
-                try
+                while (!(bool)webSocket?.CloseStatus.HasValue)
                 {
-                    SyncData data = JsonConvert.DeserializeObject<SyncData>(result);
+                    if (ct.IsCancellationRequested) break;
 
-                    var returnData = await ProcessSync(data);
+                    var result = await webSocket.ReadString(ct);
 
-                    if (returnData != null)
+                    if (webSocket.State != WebSocketState.Open) break;
+                    if (string.IsNullOrEmpty(result)) continue;
+
+                    try
                     {
-                        var response = JsonConvert.SerializeObject(returnData, _jsonOptions);
+                        SyncData data = JsonConvert.DeserializeObject<SyncData>(result);
 
-                        foreach (var (id, (socket, username)) in _clients)
+                        var returnData = await ProcessSync(data);
+
+                        if (returnData != null)
                         {
-                            if (socket.State != WebSocketState.Open || username != User.Identity.Name) continue;
-
-                            await socket.SendString(response, ct);
+                            SendToSockets(returnData);
                         }
                     }
+                    catch (Exception e) when (e is JsonReaderException || e is NoNullAllowedException)
+                    {
+                        // ToDO: Send error to client
+                    }
                 }
-                catch (Exception e) when (e is JsonReaderException || e is NoNullAllowedException)
-                {
-                    // ToDO: Send error to client
-                }
+            }
+            catch (OperationCanceledException e)
+            {
+                // Ignore
             }
 
             Tuple<WebSocket, string> dummy;
             _clients.TryRemove(socketId, out dummy);
-
-            await webSocket.CloseAsync(WebSocketCloseStatus.NormalClosure, "Closing", ct);
+             
+            if (webSocket.State == WebSocketState.Open) 
+                await webSocket.CloseAsync(WebSocketCloseStatus.NormalClosure, "Closing", ct);
             webSocket.Dispose();
         }
+
         else
         {
             HttpContext.Response.StatusCode = StatusCodes.Status400BadRequest;
         }
     }
 
-    [HttpPost("rest")]
-    public async Task<ActionResult<SyncData>> Rest(SyncData request)
+    [HttpPost("postData")]
+    public async Task<ActionResult<SyncData>> PostData(SyncData request)
     {
         try
         {
             var returnData = await ProcessSync(request);
-            if (returnData != null) return new ObjectResult(returnData);
+            if (returnData != null)
+            {
+                SendToSockets(returnData);
+                return new ObjectResult(returnData);
+            }
             else return NoContent();
         }
         catch (Exception e) when (e is NoNullAllowedException)
         {
             return BadRequest(); // ToDo: Send error to client
+        }
+    }
+
+    private async Task SendToSockets(SyncData data, CancellationToken ct = default)
+    {
+        var response = JsonConvert.SerializeObject(data, _jsonOptions);
+
+        foreach (var (id, (socket, username)) in _clients)
+        {
+            if (socket.State != WebSocketState.Open || username != User.Identity.Name) continue;
+
+            socket.SendString(response, ct);
         }
     }
 
@@ -122,7 +140,8 @@ public class SyncController : ControllerBase
                         dbToDoHistoryEntry.User = HttpContext.GetUser();
 
                         if (!_db.History.Include(h => h.User).Any(h =>
-                                h.Timestamp == dbToDoHistoryEntry.Timestamp && h.User.Id == dbToDoHistoryEntry.User.Id))
+                                h.Timestamp == dbToDoHistoryEntry.Timestamp &&
+                                h.User.Id == dbToDoHistoryEntry.User.Id))
                         {
                             _db.History.Add(dbToDoHistoryEntry);
 
@@ -132,7 +151,8 @@ public class SyncController : ControllerBase
                                     var dbToDo = _mapper.Map<DbToDoTask>(toDoHistoryEntry.NewValue);
                                     dbToDo.User = HttpContext.GetUser();
                                     if (!_db.ToDoTasks.Include(t => t.User).Any(t =>
-                                            t.Timestamp == dbToDo.Timestamp && t.User.Id == HttpContext.GetUser().Id))
+                                            t.Timestamp == dbToDo.Timestamp &&
+                                            t.User.Id == HttpContext.GetUser().Id))
                                     {
                                         _db.ToDoTasks.Add(dbToDo);
                                     }
@@ -182,5 +202,16 @@ public class SyncController : ControllerBase
         }
 
         return returnData;
+    }
+
+    [HttpGet("getCurrentData")]
+    public async Task<ActionResult<DataPackage>> GetCurrentData()
+    {
+        var data = new DataPackage()
+        {
+            ToDoTasks = await _db.ToDoTasks.Where(t => t.User.Id == HttpContext.GetUser().Id).ToListAsync()
+        };
+
+        return data;
     }
 }

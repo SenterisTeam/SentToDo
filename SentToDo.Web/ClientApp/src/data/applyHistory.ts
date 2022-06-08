@@ -24,34 +24,38 @@ export const applyHistoryToOtherTabs = (h: ToDoHistoryEntry[]) => {
 }
 
 export const applyHistoryToState = (h: ToDoHistoryEntry[], [tasks, setTasks]: [ToDoTask[], React.Dispatch<React.SetStateAction<ToDoTask[]>>]) => {
-    console.log(tasks)
+    console.log(tasks, h)
     h.forEach(e => {
         switch (e.action) {
             case HistoryAction.ADDED:
                 if (e.newValue) {
-                    const t = e.newValue
-                    if (tasks.find(t => t.timestamp == e.newValue?.timestamp)) setTasks(tasks.map(v => v.timestamp == t.timestamp ? t : v))
-                    else setTasks(tasks.concat(t))
+                    const task = e.newValue
+                    if (tasks.find(t => t.timestamp == e.newValue?.timestamp)) tasks = tasks.map(v => v.timestamp == task.timestamp ? task : v)
+                    else tasks = tasks.concat(task)
+                    
                 }
                 break;
             case HistoryAction.MODIFIED:
                 if (e.newValue) {
                     const t = e.newValue
-                    setTasks(tasks.map(v => v.timestamp == t.timestamp ? t : v))
+                    tasks = tasks.map(v => v.timestamp == t.timestamp ? t : v)
                 }
                 break;
             case HistoryAction.DELETED:
                 if (e.oldValue && e.oldValue.timestamp) {
                     const t = e.oldValue
-                    setTasks(tasks.filter(v => v.timestamp !== t.timestamp))
+                    tasks = tasks.filter(v => v.timestamp !== t.timestamp)
                 }
                 break;
         }
     })
+    
+    setTasks(tasks)
 }
 
-export const applyHistoryToServer = (h: ToDoHistoryEntry[], socket: WebSocket) => {
-    if(socket.readyState == WebSocket.OPEN)
+export const applyHistoryToServer = (h: ToDoHistoryEntry[], socket: WebSocket, setLastSync: React.Dispatch<number>) => {
+    if(socket.readyState == WebSocket.OPEN) {
+        setLastSync(Date.now())
         h.forEach((e) => {
             const data: SyncData = {
                 objectType: ObjectType.TO_DO_HISTORY_ENTRY,
@@ -59,4 +63,5 @@ export const applyHistoryToServer = (h: ToDoHistoryEntry[], socket: WebSocket) =
             }
             socket.send(JSON.stringify(data))
         })
+    }
 }

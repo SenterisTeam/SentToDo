@@ -39,6 +39,7 @@ export default function AuthProvider(props: { children: React.ReactNode }) {
 
     useEffect(() => {
         OpenAPI.TOKEN = token || undefined
+        console.log("setting token", token)
         if (token) {
             localStorage.setItem("token", token)
             setUserLoading(true)
@@ -61,7 +62,7 @@ export default function AuthProvider(props: { children: React.ReactNode }) {
 
     useEffect(() => {
         let t = localStorage.getItem("token")
-        setIsAuthenticated(t !== null)
+        //setIsAuthenticated(t !== null)
         setToken(t)
         
         const user = localStorage.getItem("user")
