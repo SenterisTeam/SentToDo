@@ -1,6 +1,16 @@
 import {createContext, useCallback, useContext, useEffect, useRef, useState} from "react";
-import {HistoryAction, ObjectType, OpenAPI, SyncData, SyncService, ToDoHistoryEntry, ToDoTask} from "../api";
 import {
+    CancelablePromise,
+    HistoryAction,
+    ObjectType,
+    OpenAPI,
+    SyncData,
+    SyncService,
+    ToDoHistoryEntry,
+    ToDoTask
+} from "../api";
+import {
+    addHistoryToDb, addHistoryToState,
     applyHistoryToOtherTabs,
     applyHistoryToServer,
     applyHistoryToState,
@@ -8,6 +18,7 @@ import {
 } from "../data/applyHistory";
 import {db} from "../data/db";
 import { useAuth } from "./AuthProvider";
+import useDidMountEffect from "./useDidMountEffect";
 
 const c = new BroadcastChannel('update_channel');
 
@@ -17,6 +28,7 @@ export interface Storage {
     addTask: (t: ToDoTask) => void
     editTask: (t: ToDoTask) => void
     removeTask: (t: ToDoTask) => void
+    dataLoaded: boolean
 }
 
 export enum SavingState {
@@ -60,6 +72,9 @@ function StorageProvider(props: { children: React.ReactNode | ((s: Storage) => R
     const [connectionState, setConnectionState] = useState<ConnectinState>(ConnectinState.DISCONNECTED)
     const reconnectTimeout = useRef<number | undefined>(undefined)
     const [lastSync, setLastSync] = useState<number>(localStorage.getItem('lastSync') ? parseInt(localStorage.getItem('lastSync') as string) : 0)
+    const [loading, setLoading] = useState<boolean>(true)
+    const [loaded, setLoaded] = useState<boolean>(false)
+    const loadDataRequest = useRef<CancelablePromise<any> | undefined>(undefined)
 
     const onMessage = (ev: MessageEvent) => {
         console.log("Message received", ev.data)
@@ -102,8 +117,10 @@ function StorageProvider(props: { children: React.ReactNode | ((s: Storage) => R
         }, 1000)
     }
     useEffect(() => {
-        db.tasks.toArray().then((t) => setTasks(t))
-        db.history.toArray().then((h) => setHistory(h))
+        Promise.all([
+            db.tasks.toArray().then((t) => setTasks(t)),
+            db.history.toArray().then((h) => setHistory(h))
+        ]).then(() => setLoading(false))
     }, [])
 
     const addTask = (t: ToDoTask) => {
@@ -161,11 +178,15 @@ function StorageProvider(props: { children: React.ReactNode | ((s: Storage) => R
     }, [lastSync])
     
     useEffect(() => {
-        if (lastSync == 0 && auth.isAuthenticated && !auth.userLoading) {
-            setLastSync(Date.now())
-            SyncService.getApiSyncGetcurrentdata().then(data => {
-                if(data.toDoTasks) {
-                    const history = data.toDoTasks.map(t => ({
+        if (lastSync == 0 && auth.isAuthenticated && !auth.userLoading && !loading && !loaded) {
+            console.log("Loading from server", lastSync)
+            setLoading(true)
+            const sync = Date.now()
+            
+            console.log(OpenAPI.TOKEN)
+            SyncService.getApiSyncGettasks().then(data => {
+                if(data) {
+                    const history = data.map(t => ({
                         timestamp: Date.now(),
                         action: HistoryAction.ADDED,
                         oldValue: undefined,
@@ -175,14 +196,43 @@ function StorageProvider(props: { children: React.ReactNode | ((s: Storage) => R
                     applyHistoryToState(history, [tasks, setTasks])
                     applyHistroyToDb(history)
                     applyHistoryToOtherTabs(history)
+
+                    setLoaded(true)
+                    setLastSync(sync)
                 }
+            }).finally(() => setLoading(false))
+        }
+        
+        console.log("Loading", lastSync != 0 , auth.isAuthenticated , !auth.userLoading , !loading , !loaded)
+        
+        if (lastSync != 0 && auth.isAuthenticated && !auth.userLoading && !loading && !loaded) {
+            console.log(OpenAPI.TOKEN)
+            setLoading(true)
+            const sync = Date.now()
+
+            loadDataRequest.current = SyncService.getApiSyncGethistory(lastSync)
+
+            loadDataRequest.current.then(data => {
+                const allHistory = addHistoryToState(data, [tasks, setTasks])
+                addHistoryToDb(data)
+
+                applyHistoryToState(data, [tasks, setTasks], allHistory)
+                applyHistroyToDb(data, allHistory)
+
+                setLastSync(sync)
+                setLoaded(true)
+                setLoading(false)
+            }).catch(() => {
+                console.log("Error loading history", loading)
+                setLoading(false)
             })
         }
         
         if (!auth.isAuthenticated && !auth.userLoading) {
+            console.log("Logging out")
             setLastSync(0);
         }
-    }, [lastSync, auth.isAuthenticated, auth.userLoading])
+    }, [lastSync, auth.isAuthenticated, auth.userLoading, tasks, history, loading, loaded])
     
     useEffect(() => {
         if (auth.isAuthenticated && connectionState == ConnectinState.START_CONNECTING) {
@@ -217,27 +267,39 @@ function StorageProvider(props: { children: React.ReactNode | ((s: Storage) => R
             socket.onopen = () => {
                 setConnectionState(ConnectinState.CONNECTED)
                 console.log("Connected to server")
-
+                
+                setLoaded(false)
                 applyHistoryToServer(history.filter(h => !h.id), socket, setLastSync)
             }
 
             socket.onmessage = (e) => {
+                loadDataRequest.current?.cancel()
                 var syncData = JSON.parse(e.data) as SyncData
                 console.log(syncData)
                 if (syncData.objectType && syncData.syncObject) {
                     setLastSync(Date.now())
                     switch (syncData.objectType) {
                         case ObjectType.TO_DO_HISTORY_ENTRY:
-                            const newHistory = syncData.syncObject as ToDoHistoryEntry
+                            const newHistoryEntry = syncData.syncObject as ToDoHistoryEntry
                             
-                            if (history.find(h => h.timestamp == newHistory)) setHistory(history.map(h => h.timestamp == newHistory.timestamp ? newHistory : h))
-                            else setHistory(history.concat(newHistory))
+                            addHistoryToState([newHistoryEntry], [history, setHistory])
                             
-                            db.history.put(newHistory)
+                            addHistoryToDb([newHistoryEntry])
                             
-                            applyHistoryToState([newHistory], [tasks, setTasks])
-                            applyHistroyToDb([newHistory])
+                            applyHistoryToState([newHistoryEntry], [tasks, setTasks], history)
+                            applyHistroyToDb([newHistoryEntry], history)
                             
+                            break;
+                        case ObjectType.TO_DO_HISTORY_ENTRYES:
+                            const newHistory = syncData.syncObject as ToDoHistoryEntry[]
+
+                            addHistoryToState(newHistory, [history, setHistory])
+
+                            addHistoryToDb(newHistory)
+
+                            applyHistoryToState(newHistory, [tasks, setTasks], history)
+                            applyHistroyToDb(newHistory, history)
+
                             break;
                     }
                 }
@@ -250,7 +312,7 @@ function StorageProvider(props: { children: React.ReactNode | ((s: Storage) => R
         }
     }, [socket, history])
     
-    const storage: Storage = {tasks: tasks || [], addTask, editTask, removeTask, savingState}
+    const storage: Storage = {tasks: tasks || [], addTask, editTask, removeTask, savingState, dataLoaded: loaded}
     return <StorageContext.Provider
         value={storage}>{typeof props.children == "function" ? props.children(storage) : props.children}</StorageContext.Provider>
 }

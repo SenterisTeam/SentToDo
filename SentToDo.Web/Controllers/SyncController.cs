@@ -145,47 +145,54 @@ public class SyncController : ControllerBase
                         {
                             _db.History.Add(dbToDoHistoryEntry);
 
-                            switch (dbToDoHistoryEntry.Action)
+                            _db.SaveChanges();
+                            
+                            var historyToApply = await _db.History.OrderBy(h => h.Timestamp).Where(e => e.Timestamp >= dbToDoHistoryEntry.Timestamp).ToListAsync();
+
+                            foreach (var historyEntry in historyToApply)
                             {
-                                case HistoryAction.Added:
-                                    var dbToDo = _mapper.Map<DbToDoTask>(toDoHistoryEntry.NewValue);
-                                    dbToDo.User = HttpContext.GetUser();
-                                    if (!_db.ToDoTasks.Include(t => t.User).Any(t =>
-                                            t.Timestamp == dbToDo.Timestamp &&
-                                            t.User.Id == HttpContext.GetUser().Id))
-                                    {
-                                        _db.ToDoTasks.Add(dbToDo);
-                                    }
-                                    else
-                                    {
-                                        _db.ToDoTasks.Update(dbToDo);
-                                    }
+                                switch (historyEntry.Action)
+                                {
+                                    case HistoryAction.Added:
+                                        var dbToDo = _mapper.Map<DbToDoTask>(historyEntry.NewValue);
+                                        dbToDo.User = HttpContext.GetUser();
+                                        if (!_db.ToDoTasks.Include(t => t.User).Any(t =>
+                                                t.Timestamp == dbToDo.Timestamp &&
+                                                t.User.Id == HttpContext.GetUser().Id))
+                                        {
+                                            _db.ToDoTasks.Add(dbToDo);
+                                        }
+                                        else
+                                        {
+                                            _db.ToDoTasks.Update(dbToDo);
+                                        }
 
-                                    break;
-                                case HistoryAction.Modified:
-                                    var dbToDoModified = await _db.ToDoTasks.FirstAsync(t =>
-                                        t.Timestamp == dbToDoHistoryEntry.NewValue.Timestamp &&
-                                        t.User.Id == HttpContext.GetUser().Id);
+                                        break;
+                                    case HistoryAction.Modified:
+                                        var dbToDoModified = await _db.ToDoTasks.FirstAsync(t =>
+                                            t.Timestamp == historyEntry.NewValue.Timestamp &&
+                                            t.User.Id == HttpContext.GetUser().Id);
 
-                                    _mapper.Map(toDoHistoryEntry.NewValue, dbToDoModified);
-                                    _db.ToDoTasks.Update(dbToDoModified);
-                                    break;
-                                case HistoryAction.Deleted:
-                                    var dbToDoDeleted = await _db.ToDoTasks.FirstAsync(t =>
-                                        t.Timestamp == dbToDoHistoryEntry.OldValue.Timestamp &&
-                                        t.User.Id == HttpContext.GetUser().Id);
-                                    _db.ToDoTasks.Remove(dbToDoDeleted);
-                                    break;
+                                        _mapper.Map(toDoHistoryEntry.NewValue, dbToDoModified);
+                                        _db.ToDoTasks.Update(dbToDoModified);
+                                        break;
+                                    case HistoryAction.Deleted:
+                                        var dbToDoDeleted = await _db.ToDoTasks.FirstAsync(t =>
+                                            t.Timestamp == historyEntry.OldValue.Timestamp &&
+                                            t.User.Id == HttpContext.GetUser().Id);
+                                        _db.ToDoTasks.Remove(dbToDoDeleted);
+                                        break;
+                                }
                             }
-
+                            
                             _db.SaveChanges();
 
                             dbContextTransaction.Commit();
 
                             returnData = new SyncData()
                             {
-                                ObjectType = ObjectType.ToDoHistoryEntry,
-                                SyncObject = _mapper.Map<ToDoHistoryEntry>(dbToDoHistoryEntry)
+                                ObjectType = ObjectType.ToDoHistoryEntryes,
+                                SyncObject = _mapper.Map<List<ToDoHistoryEntry>>(historyToApply)
                             };
 
                             return returnData;
@@ -204,14 +211,19 @@ public class SyncController : ControllerBase
         return returnData;
     }
 
-    [HttpGet("getCurrentData")]
-    public async Task<ActionResult<DataPackage>> GetCurrentData()
+    [HttpGet("getTasks")]
+    public async Task<ActionResult<IEnumerable<ToDoTask>>> GetTasks()
     {
-        var data = new DataPackage()
-        {
-            ToDoTasks = await _db.ToDoTasks.Where(t => t.User.Id == HttpContext.GetUser().Id).ToListAsync()
-        };
+        return _mapper.Map<List<ToDoTask>>(await _db.ToDoTasks.Where(t => t.User.Id == HttpContext.GetUser().Id).ToListAsync());
+    }
 
-        return data;
+    [HttpGet("getHistory")]
+    public async Task<ActionResult<IEnumerable<ToDoHistoryEntry>>> GetHistory([FromQuery] long? from, [FromQuery] long? to)
+    {
+        var history = _db.History.Where(h => h.User.Id == HttpContext.GetUser().Id);
+        if (from != null) history = history.Where(h => h.Timestamp >= from);
+        if (to != null) history = history.Where(h => h.Timestamp <= to);
+        
+        return _mapper.Map<List<ToDoHistoryEntry>>(await history.ToListAsync());
     }
 }

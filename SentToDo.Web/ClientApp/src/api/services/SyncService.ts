@@ -1,8 +1,9 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { DataPackage } from '../models/DataPackage';
 import type { SyncData } from '../models/SyncData';
+import type { ToDoHistoryEntry } from '../models/ToDoHistoryEntry';
+import type { ToDoTask } from '../models/ToDoTask';
 
 import type { CancelablePromise } from '../core/CancelablePromise';
 import { OpenAPI } from '../core/OpenAPI';
@@ -38,13 +39,33 @@ requestBody?: SyncData,
     }
 
     /**
-     * @returns DataPackage Success
+     * @returns ToDoTask Success
      * @throws ApiError
      */
-    public static getApiSyncGetcurrentdata(): CancelablePromise<DataPackage> {
+    public static getApiSyncGettasks(): CancelablePromise<Array<ToDoTask>> {
         return __request(OpenAPI, {
             method: 'GET',
-            url: '/api/sync/getcurrentdata',
+            url: '/api/sync/gettasks',
+        });
+    }
+
+    /**
+     * @param from 
+     * @param to 
+     * @returns ToDoHistoryEntry Success
+     * @throws ApiError
+     */
+    public static getApiSyncGethistory(
+from?: number,
+to?: number,
+): CancelablePromise<Array<ToDoHistoryEntry>> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/api/sync/gethistory',
+            query: {
+                'from': from,
+                'to': to,
+            },
         });
     }
 

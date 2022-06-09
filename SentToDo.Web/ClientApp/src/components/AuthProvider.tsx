@@ -32,7 +32,7 @@ export default function AuthProvider(props: { children: React.ReactNode }) {
 
     const promiseRejectionHandler = (e: PromiseRejectionEvent) => {
         if (e.reason instanceof ApiError && e.reason.status === 401) {
-            setToken(undefined)
+            setToken(null)
             e.preventDefault()
         }
     }
@@ -43,6 +43,7 @@ export default function AuthProvider(props: { children: React.ReactNode }) {
         if (token) {
             localStorage.setItem("token", token)
             setUserLoading(true)
+            setIsAuthenticated(true)
             AuthService.getApiAuthMe().then((u) => {
                 setUser(u)
                 setUserLoading(false)
@@ -56,19 +57,22 @@ export default function AuthProvider(props: { children: React.ReactNode }) {
             localStorage.removeItem("token")
             setUser(undefined)
             setUserLoading(false)
+            setIsAuthenticated(false)
         }
-        setIsAuthenticated(!!token)
     }, [token])
 
     useEffect(() => {
+        console.log("AuthProvider mounted")
         let t = localStorage.getItem("token")
         //setIsAuthenticated(t !== null)
         setToken(t)
+        OpenAPI.TOKEN = t || undefined
         
         const user = localStorage.getItem("user")
         if (user) {
             setUser(JSON.parse(user))
             setUserLoading(false)
+            setIsAuthenticated(true)
         }
 
         window.addEventListener("unhandledrejection", promiseRejectionHandler);
