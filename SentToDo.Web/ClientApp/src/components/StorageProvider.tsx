@@ -24,6 +24,7 @@ const c = new BroadcastChannel('update_channel');
 
 export interface Storage {
     tasks: ToDoTask[],
+    history: ToDoHistoryEntry[],
     savingState: SavingState,
     addTask: (t: ToDoTask) => void
     editTask: (t: ToDoTask) => void
@@ -77,7 +78,6 @@ function StorageProvider(props: { children: React.ReactNode | ((s: Storage) => R
     const loadDataRequest = useRef<CancelablePromise<any> | undefined>(undefined)
 
     const onMessage = (ev: MessageEvent) => {
-        console.log("Message received", ev.data)
         if (ev.data.type == "HISTORY" && ev.source != window) applyHistoryToState(ev.data.history, [tasks, setTasks])
     };
 
@@ -179,11 +179,9 @@ function StorageProvider(props: { children: React.ReactNode | ((s: Storage) => R
     
     useEffect(() => {
         if (lastSync == 0 && auth.isAuthenticated && !auth.userLoading && !loading && !loaded) {
-            console.log("Loading from server", lastSync)
             setLoading(true)
             const sync = Date.now()
             
-            console.log(OpenAPI.TOKEN)
             SyncService.getApiSyncGettasks().then(data => {
                 if(data) {
                     const history = data.map(t => ({
@@ -203,10 +201,7 @@ function StorageProvider(props: { children: React.ReactNode | ((s: Storage) => R
             }).finally(() => setLoading(false))
         }
         
-        console.log("Loading", lastSync != 0 , auth.isAuthenticated , !auth.userLoading , !loading , !loaded)
-        
         if (lastSync != 0 && auth.isAuthenticated && !auth.userLoading && !loading && !loaded) {
-            console.log(OpenAPI.TOKEN)
             setLoading(true)
             const sync = Date.now()
 
@@ -237,7 +232,6 @@ function StorageProvider(props: { children: React.ReactNode | ((s: Storage) => R
     useEffect(() => {
         if (auth.isAuthenticated && connectionState == ConnectinState.START_CONNECTING) {
             const url = new URL(window.location.href)
-            console.log(window.location.href)
             url.protocol = url.protocol === "http:" ? "ws:" : "wss:"
             url.pathname = "/api/sync/ws"
             
@@ -275,7 +269,6 @@ function StorageProvider(props: { children: React.ReactNode | ((s: Storage) => R
             socket.onmessage = (e) => {
                 loadDataRequest.current?.cancel()
                 var syncData = JSON.parse(e.data) as SyncData
-                console.log(syncData)
                 if (syncData.objectType && syncData.syncObject) {
                     setLastSync(Date.now())
                     switch (syncData.objectType) {
@@ -312,7 +305,7 @@ function StorageProvider(props: { children: React.ReactNode | ((s: Storage) => R
         }
     }, [socket, history])
     
-    const storage: Storage = {tasks: tasks || [], addTask, editTask, removeTask, savingState, dataLoaded: loaded}
+    const storage: Storage = {tasks: tasks || [], history, addTask, editTask, removeTask, savingState, dataLoaded: loaded}
     return <StorageContext.Provider
         value={storage}>{typeof props.children == "function" ? props.children(storage) : props.children}</StorageContext.Provider>
 }

@@ -1,0 +1,69 @@
+﻿.list {
+  width: 100%;
+  min-height: 100vh;
+  
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  
+  & > div, & > div > div {
+    & > *:not(:last-child) {
+      margin-bottom: 10px;
+    }
+
+    & > .add {
+      min-height: 50px;
+      width: 600px;
+      background: white;
+      border-radius: 5px;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+      margin-bottom: 30px;
+      
+      display: grid;
+      grid-template-columns: 1fr 30px;
+      padding-right: 10px;
+      padding-left: 10px;
+      gap: 10px;
+      
+      .input {
+        display: flex;
+        align-items: center;
+        margin: 0;
+        min-width: 0px;
+        
+        input {
+          width: 100%;
+          height: 30px;
+          border: none;
+          font-size: 28px;
+        }
+      }
+
+      .button {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        button {
+          border-radius: 100%;
+          border: 4px solid;
+          height: 30px;
+          width: 30px;
+          background: none;
+          padding: 0;
+          cursor: pointer;
+
+          &.green {
+            border-color: #009e00;
+            color: #009e00;
+          }
+
+          & > * {
+            margin: 0;
+            font-size: 15px;
+          }
+        }
+      }
+    }
+  }
+}

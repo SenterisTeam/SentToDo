@@ -10,4 +10,5 @@ export type DbToDoTask = {
     timestamp?: number;
     name?: string | null;
     completed?: boolean;
+    priority?: number;
 };

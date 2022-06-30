@@ -6,7 +6,6 @@ const c = new BroadcastChannel('update_channel');
 
 export const reviewHistory = (newHistory: ToDoHistoryEntry[], allHistory: ToDoHistoryEntry[]) => {
     if (allHistory.length > 0 && newHistory.length > 0) {
-        console.log(newHistory, allHistory)
         const lastTimestamp = newHistory.sort((a, b) => a.timestamp! - b.timestamp!)[0].timestamp
         allHistory.push(...newHistory)
         allHistory = allHistory.sort((a, b) => b.timestamp! - a.timestamp!)
@@ -40,9 +39,7 @@ export const applyHistoryToOtherTabs = (h: ToDoHistoryEntry[]) => {
 }
 
 export const applyHistoryToState = (h: ToDoHistoryEntry[], [tasks, setTasks]: [ToDoTask[], React.Dispatch<React.SetStateAction<ToDoTask[]>>], allHistory: ToDoHistoryEntry[] = []) => {
-    console.log(h)
     h = reviewHistory(h, allHistory)
-    console.log(h)
     
     h.forEach(e => {
         switch (e.action) {

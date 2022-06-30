@@ -12,7 +12,6 @@ function LogoutPage(props: Props) {
     const navigate = useNavigate();
 
     useEffect(() => {
-        console.log(auth)
         if (typeof auth.token === "string") {
             Promise.all([
                 db.tasks.clear(),

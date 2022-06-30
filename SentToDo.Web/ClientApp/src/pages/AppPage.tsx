@@ -11,12 +11,12 @@ function AppPage(props: Props) {
     
     return <StorageProvider>
         {(s) => {
-            return <>
-                {auth.isAuthenticated ? auth.user?.userName : "Not logged in"}
-                {s.savingState === SavingState.AWAITING_SAVE && <div>Awaitng...</div>}
-                {s.savingState === SavingState.SAVED && <div>Saved...</div>}
+            return <div style={{width: '100%', minHeight: '100vh', background: '#f1f1f1'}}>
+                {/*{auth.isAuthenticated ? auth.user?.userName : "Not logged in"}*/}
+                {/*{s.savingState === SavingState.AWAITING_SAVE && <div>Awaitng...</div>}*/}
+                {/*{s.savingState === SavingState.SAVED && <div>Saved...</div>}*/}
                 <Outlet/>
-            </>
+            </div>
         }}
     </StorageProvider>
 }

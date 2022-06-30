@@ -13,6 +13,13 @@ export class ApplicationDb extends Dexie {
         this.version(2).stores({
             history: '&timestamp, action, id'
         });
+        this.version(3).stores({
+            tasks: '&timestamp, name, completed, priority'
+        }).upgrade((t) => {
+            t.table("tasks").toCollection().modify((t: ToDoTask) => {
+                t.priority = 0;
+            })
+        })
     }
 }
 
